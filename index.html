@@ -1788,6 +1788,8 @@ function saveCurrentDay(){
   renderDays();
   updateSummary(d);
   saveBurst();
+  // Auto-sync to cloud
+  if(supaUrl && supaAnon) syncPush();
 }
 
 function deleteDay(d){
@@ -2724,10 +2726,20 @@ async function syncPush(){
       body: JSON.stringify({id:SUPA_ROW_ID, payload:state, updated_at:new Date().toISOString()})
     });
     if(res.ok || res.status===201){
+      // Get the actual server timestamp after push
+      var pushed = await fetch(supaUrl+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+SUPA_ROW_ID+'&select=updated_at', {
+        headers: supaHeaders()
+      });
+      if(pushed.ok){
+        var prows = await pushed.json();
+        if(prows && prows.length){
+          var serverTime = new Date(prows[0].updated_at).getTime();
+          localStorage.setItem('coolpoint_last_push', serverTime);
+        }
+      }
       var t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
       syncSetDot('ok','Synced');
       syncLog('Saved to cloud at '+t);
-      localStorage.setItem('coolpoint_last_push', Date.now());
       return true;
     }
     throw new Error('HTTP '+res.status+': '+(await res.text()));
@@ -2810,11 +2822,7 @@ function syncDisconnect(){
 }
 
 function syncWrapSave(){
-  var orig = saveCurrentDay;
-  saveCurrentDay = function(){
-    orig();
-    if(supaUrl && supaAnon) syncPush();
-  };
+  // No-op: syncPush is now called directly inside saveCurrentDay
 }
 
 var syncPollTimer = null;
@@ -2833,10 +2841,15 @@ async function syncInit(){
 function syncStartPoll(){
   if(syncPollTimer) clearInterval(syncPollTimer);
   // Poll every 30 seconds for updates
+  // Store the timestamp of what we last pulled so we can compare
+  if(!localStorage.getItem('coolpoint_last_push')){
+    localStorage.setItem('coolpoint_last_push', '0');
+  }
+
   syncPollTimer = setInterval(async function(){
     if(!supaUrl || !supaAnon) return;
     try {
-      var res = await fetch(supaUrl+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+SUPA_ROW_ID+'&select=updated_at', {
+      var res = await fetch(supaUrl+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+SUPA_ROW_ID+'&select=updated_at,payload', {
         headers: supaHeaders()
       });
       if(!res.ok) return;
@@ -2844,26 +2857,22 @@ function syncStartPoll(){
       if(!rows || !rows.length) return;
       var remoteTime = new Date(rows[0].updated_at).getTime();
       var localTime  = parseInt(localStorage.getItem('coolpoint_last_push')||'0');
-      if(remoteTime > localTime + 2000){
-        // Remote is newer — pull silently
+      var t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+      syncLog('Last check: '+t+' | remote: '+remoteTime+' local: '+localTime);
+      if(remoteTime > localTime + 1000){
+        // Remote is newer — update
         syncSetDot('busy','Updating');
-        var pullRes = await fetch(supaUrl+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+SUPA_ROW_ID+'&select=payload', {
-          headers: supaHeaders()
-        });
-        if(!pullRes.ok) return;
-        var data = await pullRes.json();
-        if(data && data.length && data[0].payload && data[0].payload.days){
-          state.days = data[0].payload.days;
+        if(rows[0].payload && rows[0].payload.days){
+          state.days = rows[0].payload.days;
           persist(); renderDays(); loadDay(el.date.value);
           localStorage.setItem('coolpoint_last_push', remoteTime);
-          var t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
           syncSetDot('ok','Updated');
           syncLog('Auto-updated at '+t);
           setTimeout(function(){ syncSetDot('ok','Synced'); }, 2000);
         }
       }
-    } catch(e){ /* silent fail on poll */ }
-  }, 30000);
+    } catch(e){ syncLog('Poll error: '+e.message); }
+  }, 15000);
 }
 
 (function init(){
