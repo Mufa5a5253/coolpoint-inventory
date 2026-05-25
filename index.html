@@ -2763,20 +2763,35 @@ async function syncPull(){
 }
 
 async function syncConnect(){
-  var url  = (document.getElementById('supaUrlInput').value  ||'').trim().replace(/\/$/,'');
+  var url  = (document.getElementById('supaUrlInput').value  ||'').trim().replace(/\/+$/,'');
   var anon = (document.getElementById('supaAnonInput').value ||'').trim();
   if(!url || !anon){ syncLog('Please fill in both fields.',true); return; }
+  // Strip /rest/v1 if accidentally included
+  url = url.replace(/\/rest\/v1.*/,'');
   supaUrl = url; supaAnon = anon;
   localStorage.setItem(SUPA_URL_STORE, supaUrl);
   localStorage.setItem(SUPA_ANN_STORE, supaAnon);
-  syncLog('Connecting…');
   syncSetDot('busy','Connecting');
-  var ok = await syncPull();
-  if(ok){
-    document.getElementById('syncStatusMsg').innerHTML = '&#10003; Connected &#8212; data syncs automatically on every save.';
-    syncLog('Connected! Use the same URL and key on your other devices.');
-  } else {
-    syncLog('Connection failed. Check your URL and key, and make sure you created the table in Supabase.', true);
+  syncLog('Testing connection to: '+supaUrl);
+  // Test connection directly
+  try {
+    var testRes = await fetch(supaUrl+'/rest/v1/'+SUPA_TABLE+'?id=eq.test&select=id&limit=1', {
+      headers: supaHeaders()
+    });
+    var testBody = await testRes.text();
+    syncLog('Server response: HTTP '+testRes.status+' — '+testBody.slice(0,120));
+    if(testRes.ok){
+      var ok = await syncPull();
+      if(ok){
+        document.getElementById('syncStatusMsg').innerHTML = '&#10003; Connected &#8212; data syncs automatically on every save.';
+        syncLog('Connected! Use the same URL and key on your other devices.');
+      }
+    } else {
+      syncSetDot('err','Error');
+    }
+  } catch(e){
+    syncSetDot('err','Error');
+    syncLog('Network error: '+e.message, true);
   }
 }
 
