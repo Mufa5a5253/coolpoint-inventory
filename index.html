@@ -2744,8 +2744,9 @@ async function syncPull(){
     var res = await fetch(supaUrl+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+SUPA_ROW_ID+'&select=payload', {
       headers: supaHeaders()
     });
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    var rows = await res.json();
+    var bodyText = await res.text();
+    if(!res.ok) throw new Error('HTTP '+res.status+' — '+bodyText);
+    var rows = JSON.parse(bodyText);
     if(rows && rows.length && rows[0].payload && rows[0].payload.days){
       state.days = rows[0].payload.days;
       persist(); renderDays(); loadDay(el.date.value);
