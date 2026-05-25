@@ -1065,6 +1065,40 @@ body.light .milk-prod-row-name{color:#92400e}
   table{ min-width:0 !important }
 }
 
+
+/* ── statistics card ── */
+.stats-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.stats-table thead th{
+  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);padding:7px 12px;border-bottom:1px solid var(--border);
+  text-align:left;white-space:nowrap;
+}
+.stats-table thead th:not(:first-child){text-align:right}
+.stats-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+.stats-table tbody tr:last-child{border-bottom:none}
+.stats-table tbody tr:hover{background:var(--surface2)}
+.stats-table td{padding:8px 12px;vertical-align:middle}
+.stats-table td:not(:first-child){text-align:right;font-weight:600;white-space:nowrap}
+.stats-td-name{font-weight:700;color:#fde68a;font-size:13px}
+body.light .stats-td-name{color:#92400e}
+.stats-td-qty{color:var(--ink)}
+.stats-td-val{color:var(--accent3)}
+.stats-td-milk{color:var(--accent)}
+.stats-td-ess{color:var(--accent2)}
+.stats-td-flav{font-size:11px;color:var(--muted);text-align:left!important}
+.stats-section-head{
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted2);padding:14px 0 6px;
+}
+.stats-grand-row td{
+  font-weight:800;font-size:13px;
+  border-top:2px solid var(--border);
+  padding-top:10px;
+}
+.stats-grand-row .stats-td-val{color:var(--accent3);font-size:15px}
+.stats-grand-row .stats-td-milk{color:var(--accent);font-size:15px}
+.stats-empty{padding:24px 0;text-align:center;color:var(--muted2);font-size:13px}
+
 /* ── theme toggle ── */
 .theme-btn{
   position:relative;
@@ -1191,7 +1225,6 @@ body.light .theme-btn{background:#e2e8f0}
         <div class="card-icon green">📦</div>
         <h2>Daily Entry</h2>
         <span style="margin-left:auto;display:flex;align-items:center;gap:10px">
-          <button id="toggleAllTime" class="btn-alltime" title="Show all-time totals per product">All-time</button>
           <span style="display:flex;align-items:center;font-size:12px;color:var(--muted)"><span class="live-dot"></span> Live</span>
         </span>
       </div>
@@ -1283,6 +1316,34 @@ body.light .theme-btn{background:#e2e8f0}
           <button id="invAddSaveBtn" class="btn-tip">&#43; Add to Inventory</button>
           <button class="btn-ghost" onclick="invAddClear()">Clear</button>
         </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- statistics card -->
+  <div class="card card-accent-purple stats-card" style="animation-delay:.4s">
+    <div class="card-header" id="statsCardToggle" style="cursor:pointer;user-select:none" onclick="statsToggle()">
+      <div class="card-icon purple">&#128202;</div>
+      <h2>Statistics</h2>
+      <span style="font-size:11px;color:var(--muted2);margin-left:4px">All-time product totals, milk &amp; essence usage</span>
+      <span id="statsChevron" style="margin-left:auto;font-size:12px;color:var(--muted);transition:transform .25s">&#9660;</span>
+    </div>
+    <div id="statsBody" style="display:none;padding:0 20px 20px">
+
+      <!-- sub tabs -->
+      <div class="milk-mgmt-tabs" style="padding:14px 0 12px">
+        <button class="milk-mgmt-tab active" id="statsTabInv"  onclick="statsTab('inv')">&#128230; Inventory</button>
+        <button class="milk-mgmt-tab"        id="statsTabMilk" onclick="statsTab('milk')">&#127866; Milk &amp; Essence</button>
+      </div>
+
+      <!-- inventory stats panel -->
+      <div id="statsPanelInv">
+        <div id="statsInvContent"></div>
+      </div>
+
+      <!-- milk stats panel -->
+      <div id="statsPanelMilk" style="display:none">
+        <div id="statsMilkContent"></div>
       </div>
 
     </div>
@@ -1940,17 +2001,7 @@ function saveTitles(){
 });
 loadTitles();
 
-// ── all-time toggle ──
-(function(){
-  const btn = document.getElementById('toggleAllTime');
-  const tbl = document.getElementById('entryTable');
-  let on = false;
-  btn.onclick = () => {
-    on = !on;
-    tbl.classList.toggle('hide-alltime', !on);
-    btn.classList.toggle('active', on);
-  };
-})();
+// all-time toggle removed
 
 // ── theme toggle ──
 const THEME_KEY = 'coolpoint_theme';
@@ -2900,6 +2951,201 @@ function syncStartPoll(){
       }
     } catch(e){ syncLog('Poll error: '+e.message); }
   }, 15000);
+}
+
+
+// ════════════ STATISTICS ════════════
+// Flavour map: which flavour each inventory product uses
+const PROD_FLAVOUR = {
+  '50ML CUP':           'Vanilla',
+  '100ML CUP':          'Vanilla',
+  '100ML CUP BS':       'Butterscotch',
+  'SUNDAE':             'Vanilla',
+  'SMALLCONE BS':       'Butterscotch',
+  'SMALLCONE SB':       'Strawberry',
+  'SMALLCONE CC':       'Chocolate',
+  'BIGCONE BS':         'Butterscotch',
+  'BIGCONE CC':         'Chocolate',
+  'FAMILYPACK 400ML':   'Vanilla',
+  'FAMILYPACK 400ML BS':'Butterscotch',
+  'FAMILYPACK 700ML':   'Vanilla',
+  'FAMILYPACK 700ML BS':'Butterscotch',
+  'BULK':               'Vanilla',
+  'BULK BS':            'Butterscotch',
+};
+
+// Milk ml per box/unit for each inventory product
+const PROD_MILK = {
+  '100ML CUP':          600,
+  '100ML CUP BS':       600,
+  'SUNDAE':             500,
+  'SMALLCONE BS':       720,
+  'SMALLCONE SB':       720,
+  'SMALLCONE CC':       720,
+  'BIGCONE BS':         680,
+  'BIGCONE CC':         680,
+  'FAMILYPACK 400ML':   175,
+  'FAMILYPACK 400ML BS':175,
+  'FAMILYPACK 700ML':   306,
+  'FAMILYPACK 700ML BS':306,
+  'BULK':               2000,
+  'BULK BS':            2000,
+};
+
+// Essence ml per box/unit
+const PROD_ESS = {
+  '100ML CUP':          1.8,
+  '100ML CUP BS':       1.5,
+  'SUNDAE':             1.5,
+  'SMALLCONE BS':       1.8,
+  'SMALLCONE SB':       1.8,
+  'SMALLCONE CC':       2.16,
+  'BIGCONE BS':         1.7,
+  'BIGCONE CC':         2.04,
+  'FAMILYPACK 400ML':   0.525,
+  'FAMILYPACK 400ML BS':0.4375,
+  'FAMILYPACK 700ML':   0.918,
+  'FAMILYPACK 700ML BS':0.765,
+  'BULK':               6.0,
+  'BULK BS':            5.0,
+};
+
+var statsOpen = false;
+var statsCurrentTab = 'inv';
+
+function statsToggle(){
+  var body    = document.getElementById('statsBody');
+  var chevron = document.getElementById('statsChevron');
+  statsOpen = body.style.display === 'none';
+  body.style.display = statsOpen ? 'block' : 'none';
+  chevron.style.transform = statsOpen ? 'rotate(180deg)' : '';
+  if(statsOpen) statsRender();
+}
+
+function statsTab(tab){
+  statsCurrentTab = tab;
+  document.getElementById('statsPanelInv').style.display  = tab==='inv'  ? 'block' : 'none';
+  document.getElementById('statsPanelMilk').style.display = tab==='milk' ? 'block' : 'none';
+  document.getElementById('statsTabInv').className  = 'milk-mgmt-tab'+(tab==='inv' ?' active':'');
+  document.getElementById('statsTabMilk').className = 'milk-mgmt-tab'+(tab==='milk'?' active':'');
+  statsRender();
+}
+
+function statsCalc(){
+  var totals = {}; // {name: {qty, val, milk, ess, flavour}}
+  PRODUCTS.forEach(function(p){ totals[p.name] = {qty:0, val:0, milk:0, ess:0, flavour: PROD_FLAVOUR[p.name]||null}; });
+
+  Object.values(state.days).forEach(function(day){
+    Object.entries(day.entries||{}).forEach(function(entry){
+      var name = entry[0], e = entry[1];
+      var qty = +(e.quantity||0), rate = +(e.rate||0);
+      if(!totals[name]) totals[name] = {qty:0, val:0, milk:0, ess:0, flavour: PROD_FLAVOUR[name]||null};
+      totals[name].qty += qty;
+      totals[name].val += qty * rate;
+      if(PROD_MILK[name])  totals[name].milk += qty * PROD_MILK[name];
+      if(PROD_ESS[name])   totals[name].ess  += qty * PROD_ESS[name];
+    });
+  });
+  return totals;
+}
+
+function statsRender(){
+  if(!statsOpen) return;
+  var totals   = statsCalc();
+  var allProds = invAllProds();
+
+  var fmtMlStat = function(ml){
+    if(ml <= 0) return '—';
+    return ml >= 1000 ? (ml/1000).toFixed(2)+' L' : ml.toFixed(1)+' ml';
+  };
+
+  if(statsCurrentTab === 'inv'){
+    // ── Inventory tab: flat table, no flavour grouping headers ──
+    var grandQty = 0, grandVal = 0, grandMilk = 0, grandEss = 0;
+    var rows = '';
+
+    allProds.forEach(function(p){
+      var t = totals[p.name]||{qty:0,val:0,milk:0,ess:0};
+      grandQty  += t.qty;
+      grandVal  += t.val;
+      grandMilk += t.milk;
+      grandEss  += t.ess;
+      var hasMilk = PROD_MILK[p.name];
+      rows += '<tr>'
+        +'<td class="stats-td-name">'+p.name+'</td>'
+        +'<td class="stats-td-qty">'+(t.qty>0 ? t.qty.toLocaleString('en-IN')+' '+p.unit : '—')+'</td>'
+        +'<td class="stats-td-val">'+(t.val>0 ? '\u20b9'+t.val.toLocaleString('en-IN') : '—')+'</td>'
+        +'<td class="stats-td-milk">'+(hasMilk && t.milk>0 ? fmtMlStat(t.milk) : '—')+'</td>'
+        +'<td class="stats-td-ess">'+(t.ess>0 ? fmtMlStat(t.ess) : '—')+'</td>'
+        +'</tr>';
+    });
+
+    var html = '<table class="stats-table"><thead><tr>'
+      +'<th>Product</th><th>Total Qty</th><th>All-time Value</th>'
+      +'<th>Milk Used</th><th>Essence Used</th>'
+      +'</tr></thead><tbody>'
+      +rows
+      +'</tbody><tfoot><tr class="stats-grand-row">'
+      +'<td style="color:var(--muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase">TOTAL</td>'
+      +'<td class="stats-td-qty" style="font-size:14px">'+grandQty.toLocaleString('en-IN')+' units</td>'
+      +'<td class="stats-td-val">\u20b9'+grandVal.toLocaleString('en-IN')+'</td>'
+      +'<td class="stats-td-milk">'+fmtMlStat(grandMilk)+'</td>'
+      +'<td class="stats-td-ess">'+fmtMlStat(grandEss)+'</td>'
+      +'</tr></tfoot></table>';
+
+    document.getElementById('statsInvContent').innerHTML = html;
+
+  } else {
+    // ── Milk & Essence tab: per-flavour totals across all products ──
+    var flavourOrder = ['Vanilla','Butterscotch','Strawberry','Chocolate'];
+    var flavourColors = {
+      Vanilla:'var(--accent)',
+      Butterscotch:'#f59e0b',
+      Strawberry:'#fb7185',
+      Chocolate:'#92400e'
+    };
+    // Aggregate by flavour
+    var byFlavour = {};
+    flavourOrder.forEach(function(f){ byFlavour[f] = {milk:0, ess:0}; });
+
+    allProds.forEach(function(p){
+      var t  = totals[p.name]||{qty:0,milk:0,ess:0};
+      var fl = PROD_FLAVOUR[p.name];
+      if(!fl || !t.qty) return;
+      if(!byFlavour[fl]) byFlavour[fl] = {milk:0,ess:0};
+      byFlavour[fl].milk += t.milk;
+      byFlavour[fl].ess  += t.ess;
+    });
+
+    var totalMilk = 0, totalEss = 0;
+    var flavRows = '';
+    flavourOrder.forEach(function(fl){
+      var d = byFlavour[fl];
+      if(!d || (!d.milk && !d.ess)) return;
+      totalMilk += d.milk; totalEss += d.ess;
+      flavRows += '<tr>'
+        +'<td style="font-weight:700;color:'+flavourColors[fl]+';font-size:13px">'+fl+'</td>'
+        +'<td class="stats-td-milk">'+fmtMlStat(d.milk)+'</td>'
+        +'<td class="stats-td-ess">'+fmtMlStat(d.ess)+'</td>'
+        +'</tr>';
+    });
+
+    if(!flavRows){
+      flavRows = '<tr><td colspan="3" class="stats-empty">No inventory data yet</td></tr>';
+    }
+
+    var html2 = '<table class="stats-table"><thead><tr>'
+      +'<th>Flavour</th><th>Total Milk Used</th><th>Total Essence Used</th>'
+      +'</tr></thead><tbody>'
+      +flavRows
+      +'</tbody><tfoot><tr class="stats-grand-row">'
+      +'<td style="color:var(--muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase">TOTAL</td>'
+      +'<td class="stats-td-milk">'+fmtMlStat(totalMilk)+'</td>'
+      +'<td class="stats-td-ess">'+fmtMlStat(totalEss)+'</td>'
+      +'</tr></tfoot></table>';
+
+    document.getElementById('statsMilkContent').innerHTML = html2;
+  }
 }
 
 (function init(){
