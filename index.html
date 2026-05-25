@@ -2727,6 +2727,7 @@ async function syncPush(){
       var t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
       syncSetDot('ok','Synced');
       syncLog('Saved to cloud at '+t);
+      localStorage.setItem('coolpoint_last_push', Date.now());
       return true;
     }
     throw new Error('HTTP '+res.status+': '+(await res.text()));
@@ -2785,6 +2786,7 @@ async function syncConnect(){
       if(ok){
         document.getElementById('syncStatusMsg').innerHTML = '&#10003; Connected &#8212; data syncs automatically on every save.';
         syncLog('Connected! Use the same URL and key on your other devices.');
+        syncStartPoll();
       }
     } else {
       syncSetDot('err','Error');
@@ -2815,11 +2817,53 @@ function syncWrapSave(){
   };
 }
 
+var syncPollTimer = null;
+
 async function syncInit(){
   supaUrl  = localStorage.getItem(SUPA_URL_STORE)||'';
   supaAnon = localStorage.getItem(SUPA_ANN_STORE)||'';
-  if(supaUrl && supaAnon){ syncSetDot('busy','Syncing'); await syncPull(); }
+  if(supaUrl && supaAnon){
+    syncSetDot('busy','Syncing');
+    await syncPull();
+    syncStartPoll();
+  }
   syncWrapSave();
+}
+
+function syncStartPoll(){
+  if(syncPollTimer) clearInterval(syncPollTimer);
+  // Poll every 30 seconds for updates
+  syncPollTimer = setInterval(async function(){
+    if(!supaUrl || !supaAnon) return;
+    try {
+      var res = await fetch(supaUrl+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+SUPA_ROW_ID+'&select=updated_at', {
+        headers: supaHeaders()
+      });
+      if(!res.ok) return;
+      var rows = await res.json();
+      if(!rows || !rows.length) return;
+      var remoteTime = new Date(rows[0].updated_at).getTime();
+      var localTime  = parseInt(localStorage.getItem('coolpoint_last_push')||'0');
+      if(remoteTime > localTime + 2000){
+        // Remote is newer — pull silently
+        syncSetDot('busy','Updating');
+        var pullRes = await fetch(supaUrl+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+SUPA_ROW_ID+'&select=payload', {
+          headers: supaHeaders()
+        });
+        if(!pullRes.ok) return;
+        var data = await pullRes.json();
+        if(data && data.length && data[0].payload && data[0].payload.days){
+          state.days = data[0].payload.days;
+          persist(); renderDays(); loadDay(el.date.value);
+          localStorage.setItem('coolpoint_last_push', remoteTime);
+          var t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+          syncSetDot('ok','Updated');
+          syncLog('Auto-updated at '+t);
+          setTimeout(function(){ syncSetDot('ok','Synced'); }, 2000);
+        }
+      }
+    } catch(e){ /* silent fail on poll */ }
+  }, 30000);
 }
 
 (function init(){
