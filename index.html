@@ -1038,6 +1038,33 @@ body.light .milk-prod-row-name{color:#92400e}
 .sync-dot.err{background:#f87171}
 .sync-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em}
 
+
+/* ── mobile table fix ── */
+@media(max-width:600px){
+  /* always show unit badge on mobile regardless of qty */
+  .qty-unit{ display:inline-flex !important; opacity:1 !important; transform:scale(1) !important }
+
+  /* hide all-time column */
+  thead th.th-alltotal,
+  tbody td.td-alltotal{ display:none }
+
+  /* tighten padding */
+  td{ padding:8px 10px !important }
+  thead th{ padding:8px 10px !important }
+
+  /* qty input smaller */
+  td input{ width:64px !important }
+
+  /* product name wraps */
+  .td-name{ white-space:normal !important; font-size:12px !important }
+
+  /* value column */
+  .td-value{ font-size:13px !important; white-space:nowrap }
+
+  /* remove forced min-width so table fits screen */
+  table{ min-width:0 !important }
+}
+
 /* ── theme toggle ── */
 .theme-btn{
   position:relative;
