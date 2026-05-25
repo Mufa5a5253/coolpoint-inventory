@@ -1299,32 +1299,34 @@ body.light .theme-btn{background:#e2e8f0}
 </div>
 <!-- sync panel -->
 <div id="syncOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;backdrop-filter:blur(4px)" onclick="syncHidePanel()"></div>
-<div id="syncPanel" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:201;width:min(420px,90vw);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 24px 64px rgba(0,0,0,.5);overflow:hidden">
+<div id="syncPanel" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:201;width:min(460px,92vw);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 24px 64px rgba(0,0,0,.5);overflow:hidden">
   <div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
     <div class="card-icon blue">&#9729;</div>
     <h2 style="font-size:16px;font-weight:700;color:var(--ink);flex:1">Cloud Sync</h2>
     <button onclick="syncHidePanel()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:0">&#10005;</button>
   </div>
   <div style="padding:20px 24px">
-    <div id="syncStatusMsg" style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.5"></div>
-    <div style="margin-bottom:16px">
-      <label style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px">Your Sync Key</label>
-      <div style="display:flex;gap:8px">
-        <input id="syncKeyInput" type="text" placeholder="Enter or generate key…"
-          style="flex:1;font:inherit;font-size:14px;font-weight:700;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--accent);outline:none;letter-spacing:.08em"
-          oninput="document.getElementById('syncKeyInput').style.borderColor='var(--border)'"
-        />
-        <button onclick="syncCopyKey()" class="btn-ghost" style="padding:10px 14px;font-size:12px;white-space:nowrap" title="Copy key">&#128203; Copy</button>
+    <div id="syncStatusMsg" style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6"></div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+      <div>
+        <label style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px">Supabase Project URL</label>
+        <input id="supaUrlInput" type="text" placeholder="https://xyzabc.supabase.co"
+          style="width:100%;font:inherit;font-size:13px;padding:9px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--ink);outline:none"/>
       </div>
-      <p style="font-size:11px;color:var(--muted2);margin-top:6px;line-height:1.5">Use the same key on all your devices to keep data in sync.</p>
+      <div>
+        <label style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px">Anon Public Key</label>
+        <input id="supaAnonInput" type="password" placeholder="eyJhbGciOiJIUzI1NiIs…"
+          style="width:100%;font:inherit;font-size:13px;padding:9px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--ink);outline:none"/>
+      </div>
+      <p style="font-size:11px;color:var(--muted2);line-height:1.6;margin-top:-4px">&#128274; Keys stored only on this device. Find them at <b>supabase.com</b> &#8594; your project &#8594; <b>Settings &#8594; API</b>.</p>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:8px">
       <button onclick="syncConnect()" class="btn-primary" style="font-size:13px">&#9729; Connect</button>
       <button onclick="syncPull()" class="btn-secondary" style="font-size:13px">&#8595; Pull latest</button>
       <button onclick="syncPush()" class="btn-secondary" style="font-size:13px">&#8593; Push now</button>
-      <button onclick="syncGenKey()" class="btn-ghost" style="font-size:12px">&#10009; New key</button>
+      <button onclick="syncDisconnect()" class="btn-ghost" style="font-size:12px">Disconnect</button>
     </div>
-    <div id="syncLog" style="margin-top:14px;font-size:11px;color:var(--muted2);min-height:20px"></div>
+    <div id="syncLog" style="margin-top:12px;font-size:11px;min-height:20px"></div>
   </div>
 </div>
 
@@ -2666,36 +2668,45 @@ function invAddInit(){
 }
 
 
-// ════════════ CLOUD SYNC (JSONBin) ════════════
-const SYNC_KEY_STORE = 'coolpoint_sync_key';
-const JSONBIN_API    = 'https://api.jsonbin.io/v3';
-const JSONBIN_MASTER = '$2a$10$8K1p/a0dL4TykVaB.8C5Ge1234567890abcdefghij'; // public master key for bin creation
+// ════════════ CLOUD SYNC (Supabase) ════════════
+const SUPA_URL_STORE = 'coolpoint_supa_url';
+const SUPA_ANN_STORE = 'coolpoint_supa_anon';
+const SUPA_TABLE     = 'coolpoint_sync';
+const SUPA_ROW_ID    = 'main';
 
-var syncBinId  = null;
-var syncActive = false;
+var supaUrl  = localStorage.getItem(SUPA_URL_STORE) || '';
+var supaAnon = localStorage.getItem(SUPA_ANN_STORE) || '';
+
+function supaHeaders(){
+  return {
+    'Content-Type':  'application/json',
+    'apikey':        supaAnon,
+    'Authorization': 'Bearer ' + supaAnon,
+    'Prefer':        'resolution=merge-duplicates'
+  };
+}
 
 function syncSetDot(state, label){
   var dot = document.getElementById('syncDot');
   var lbl = document.getElementById('syncLabel');
-  if(dot){ dot.className = 'sync-dot' + (state ? ' '+state : ''); }
-  if(lbl){ lbl.textContent = label || 'Sync'; }
+  if(dot) dot.className = 'sync-dot' + (state ? ' '+state : '');
+  if(lbl) lbl.textContent = label || 'Sync';
 }
 
-function syncLog(msg){
+function syncLog(msg, isErr){
   var el2 = document.getElementById('syncLog');
-  if(el2) el2.textContent = msg;
+  if(el2){ el2.textContent = msg; el2.style.color = isErr ? 'var(--bad)' : 'var(--muted2)'; }
 }
 
 function syncShowPanel(){
   document.getElementById('syncOverlay').style.display = 'block';
   document.getElementById('syncPanel').style.display   = 'block';
-  var saved = localStorage.getItem(SYNC_KEY_STORE) || '';
-  document.getElementById('syncKeyInput').value = saved;
-  var msg = saved
-    ? 'Connected with key <b style="color:var(--accent)">' + saved.slice(0,8) + '…</b> — your data syncs automatically on every save.'
-    : 'No sync key set. Generate a new key to create a cloud backup, or enter an existing key to connect to your data from another device.';
-  document.getElementById('syncStatusMsg').innerHTML = msg;
+  document.getElementById('supaUrlInput').value  = supaUrl;
+  document.getElementById('supaAnonInput').value = supaAnon;
   syncLog('');
+  document.getElementById('syncStatusMsg').innerHTML = (supaUrl && supaAnon)
+    ? '&#10003; Connected &#8212; data syncs automatically on every save.'
+    : 'Paste your Supabase Project URL and anon key below, then click Connect.';
 }
 
 function syncHidePanel(){
@@ -2703,169 +2714,95 @@ function syncHidePanel(){
   document.getElementById('syncPanel').style.display   = 'none';
 }
 
-function syncGenKey(){
-  if(!confirm('Generate a new sync key? This will create a new cloud slot — your current key will stop syncing.')) return;
-  localStorage.removeItem(SYNC_KEY_STORE);
-  syncBinId = null;
-  document.getElementById('syncKeyInput').value = '';
-  syncLog('New key cleared. Click Connect to create a fresh cloud slot.');
-}
-
-function syncCopyKey(){
-  var val = document.getElementById('syncKeyInput').value.trim();
-  if(!val){ syncLog('No key to copy.'); return; }
-  navigator.clipboard.writeText(val).then(function(){
-    syncLog('Key copied to clipboard!');
-  }).catch(function(){
-    syncLog('Copy failed — please select and copy manually.');
-  });
-}
-
-function syncGetKey(){
-  var inp = document.getElementById('syncKeyInput').value.trim();
-  if(inp) return inp;
-  return localStorage.getItem(SYNC_KEY_STORE) || null;
-}
-
-// Parse key format: "binId:accessKey"
-function syncParseKey(key){
-  if(!key) return null;
-  var parts = key.split(':');
-  if(parts.length < 2) return null;
-  return {binId: parts[0], accessKey: parts.slice(1).join(':')};
-}
-
-async function syncConnect(){
-  var raw = document.getElementById('syncKeyInput').value.trim();
-  syncLog('');
-  if(raw && syncParseKey(raw)){
-    // Existing key — try to pull
-    localStorage.setItem(SYNC_KEY_STORE, raw);
-    syncSetDot('busy','Syncing');
-    syncLog('Connecting…');
-    var ok = await syncPullSilent(raw);
-    if(ok){
-      syncSetDot('ok','Synced');
-      syncLog('Connected! Data pulled from cloud.');
-      document.getElementById('syncStatusMsg').innerHTML = 'Connected with key <b style="color:var(--accent)">' + raw.slice(0,8) + '…</b> — your data syncs automatically on every save.';
-    } else {
-      syncSetDot('err','Error');
-      syncLog('Could not connect. Check your key and try again.');
-    }
-  } else {
-    // No key — create a new bin
-    syncLog('Creating new cloud slot…');
-    syncSetDot('busy','Creating');
-    try {
-      var res = await fetch(JSONBIN_API+'/b', {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'X-Master-Key': JSONBIN_MASTER,
-          'X-Bin-Name': 'coolpoint-'+Date.now(),
-          'X-Bin-Private': 'false'
-        },
-        body: JSON.stringify({data: state, version: 1})
-      });
-      var data = await res.json();
-      if(data.metadata && data.metadata.id){
-        var binId = data.metadata.id;
-        var newKey = binId + ':public';
-        localStorage.setItem(SYNC_KEY_STORE, newKey);
-        document.getElementById('syncKeyInput').value = newKey;
-        syncSetDot('ok','Synced');
-        syncLog('Cloud slot created! Share this key with your other devices.');
-        document.getElementById('syncStatusMsg').innerHTML = 'Connected! Key: <b style="color:var(--accent)">' + newKey.slice(0,16) + '…</b> — copy it to your other devices.';
-      } else {
-        throw new Error('No bin ID returned');
-      }
-    } catch(e) {
-      syncSetDot('err','Error');
-      syncLog('Could not create cloud slot: ' + e.message);
-    }
-  }
-}
-
-async function syncPullSilent(rawKey){
-  var k = syncParseKey(rawKey || syncGetKey());
-  if(!k) return false;
+async function syncPush(){
+  if(!supaUrl || !supaAnon) return false;
+  syncSetDot('busy','Saving');
   try {
-    var res = await fetch(JSONBIN_API+'/b/'+k.binId+'/latest', {
-      headers:{'X-Master-Key': JSONBIN_MASTER}
+    var res = await fetch(supaUrl+'/rest/v1/'+SUPA_TABLE, {
+      method:'POST',
+      headers: supaHeaders(),
+      body: JSON.stringify({id:SUPA_ROW_ID, payload:state, updated_at:new Date().toISOString()})
     });
-    var data = await res.json();
-    if(data.record && data.record.data){
-      state.days = data.record.data.days || state.days;
-      persist(); renderDays(); loadDay(el.date.value);
+    if(res.ok || res.status===201){
+      var t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+      syncSetDot('ok','Synced');
+      syncLog('Saved to cloud at '+t);
       return true;
     }
+    throw new Error('HTTP '+res.status+': '+(await res.text()));
+  } catch(e){
+    syncSetDot('err','Error');
+    syncLog('Push failed: '+e.message, true);
     return false;
-  } catch(e){ return false; }
+  }
 }
 
 async function syncPull(){
-  syncSetDot('busy','Pulling');
-  syncLog('Pulling latest data…');
-  var ok = await syncPullSilent();
-  if(ok){
-    syncSetDot('ok','Synced');
-    syncLog('Data pulled from cloud successfully.');
-  } else {
-    syncSetDot('err','Error');
-    syncLog('Pull failed. Make sure your key is set and you are online.');
-  }
-}
-
-async function syncPush(){
-  var k = syncParseKey(syncGetKey());
-  if(!k){ syncLog('No sync key set. Click Connect first.'); return; }
-  syncSetDot('busy','Pushing');
-  syncLog('Pushing data to cloud…');
+  if(!supaUrl || !supaAnon){ syncLog('Not configured.',true); return false; }
+  syncSetDot('busy','Loading');
   try {
-    var res = await fetch(JSONBIN_API+'/b/'+k.binId, {
-      method:'PUT',
-      headers:{
-        'Content-Type':'application/json',
-        'X-Master-Key': JSONBIN_MASTER
-      },
-      body: JSON.stringify({data: state, version: 1})
+    var res = await fetch(supaUrl+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+SUPA_ROW_ID+'&select=payload', {
+      headers: supaHeaders()
     });
-    var data = await res.json();
-    if(data.metadata){
-      syncSetDot('ok','Synced');
-      syncLog('Pushed at ' + new Date().toLocaleTimeString());
-    } else {
-      throw new Error('Unexpected response');
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    var rows = await res.json();
+    if(rows && rows.length && rows[0].payload && rows[0].payload.days){
+      state.days = rows[0].payload.days;
+      persist(); renderDays(); loadDay(el.date.value);
     }
+    var t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    syncSetDot('ok','Synced');
+    syncLog('Data loaded at '+t);
+    return true;
   } catch(e){
     syncSetDot('err','Error');
-    syncLog('Push failed: ' + e.message);
+    syncLog('Pull failed: '+e.message, true);
+    return false;
   }
 }
 
-// Auto-push after every saveCurrentDay
-var _origSaveCurrentDay = null;
+async function syncConnect(){
+  var url  = (document.getElementById('supaUrlInput').value  ||'').trim().replace(/\/$/,'');
+  var anon = (document.getElementById('supaAnonInput').value ||'').trim();
+  if(!url || !anon){ syncLog('Please fill in both fields.',true); return; }
+  supaUrl = url; supaAnon = anon;
+  localStorage.setItem(SUPA_URL_STORE, supaUrl);
+  localStorage.setItem(SUPA_ANN_STORE, supaAnon);
+  syncLog('Connecting…');
+  syncSetDot('busy','Connecting');
+  var ok = await syncPull();
+  if(ok){
+    document.getElementById('syncStatusMsg').innerHTML = '&#10003; Connected &#8212; data syncs automatically on every save.';
+    syncLog('Connected! Use the same URL and key on your other devices.');
+  } else {
+    syncLog('Connection failed. Check your URL and key, and make sure you created the table in Supabase.', true);
+  }
+}
+
+function syncDisconnect(){
+  if(!confirm('Disconnect cloud sync? Your local data will not be affected.')) return;
+  supaUrl=''; supaAnon='';
+  localStorage.removeItem(SUPA_URL_STORE);
+  localStorage.removeItem(SUPA_ANN_STORE);
+  syncSetDot('','Sync');
+  document.getElementById('supaUrlInput').value='';
+  document.getElementById('supaAnonInput').value='';
+  document.getElementById('syncStatusMsg').innerHTML='Disconnected.';
+  syncLog('Cloud sync disabled.');
+}
+
 function syncWrapSave(){
   var orig = saveCurrentDay;
   saveCurrentDay = function(){
     orig();
-    var key = syncGetKey();
-    if(key && syncParseKey(key)){
-      syncSetDot('busy','Syncing');
-      syncPush().then(function(){});
-    }
+    if(supaUrl && supaAnon) syncPush();
   };
 }
 
-// Auto-pull on page load if key exists
 async function syncInit(){
-  var key = localStorage.getItem(SYNC_KEY_STORE);
-  if(key && syncParseKey(key)){
-    document.getElementById('syncKeyInput') && (document.getElementById('syncKeyInput').value = key);
-    syncSetDot('busy','Syncing');
-    var ok = await syncPullSilent(key);
-    syncSetDot(ok?'ok':'err', ok?'Synced':'Offline');
-  }
+  supaUrl  = localStorage.getItem(SUPA_URL_STORE)||'';
+  supaAnon = localStorage.getItem(SUPA_ANN_STORE)||'';
+  if(supaUrl && supaAnon){ syncSetDot('busy','Syncing'); await syncPull(); }
   syncWrapSave();
 }
 
