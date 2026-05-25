@@ -58,8 +58,12 @@ header{
   background:rgba(10,14,26,.85);
   backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
-  padding:0 24px;
+  padding:0 0;
+  overflow-x:auto;
+  overflow-y:visible;
+  scrollbar-width:none;
 }
+header::-webkit-scrollbar{display:none}
 .header-inner{
   max-width:1400px;
   margin:0 auto;
@@ -68,6 +72,8 @@ header{
   justify-content:space-between;
   height:68px;
   gap:16px;
+  padding:0 20px;
+  min-width:max-content;
 }
 .logo{
   display:flex;
@@ -1040,6 +1046,9 @@ body.light .milk-prod-row-name{color:#92400e}
 
 
 /* ── mobile table fix ── */
+@media(max-width:720px){
+  #savedDaysChevron{ display:inline !important }
+}
 @media(max-width:600px){
   /* always show unit badge on mobile regardless of qty */
   .qty-unit{ display:inline-flex !important; opacity:1 !important; transform:scale(1) !important }
@@ -1051,6 +1060,17 @@ body.light .milk-prod-row-name{color:#92400e}
   /* tighten padding */
   td{ padding:8px 10px !important }
   thead th{ padding:8px 10px !important }
+
+  /* stats table: hide milk/essence on mobile to prevent cutoff */
+  .stats-table thead th:nth-child(4),
+  .stats-table thead th:nth-child(5),
+  .stats-table tbody td:nth-child(4),
+  .stats-table tbody td:nth-child(5),
+  .stats-table tfoot td:nth-child(4),
+  .stats-table tfoot td:nth-child(5){ display:none }
+  /* stats table full width */
+  .stats-table{ font-size:12px }
+  .stats-card .card-header span:not(#statsChevron){ display:none }
 
   /* qty input smaller */
   td input{ width:64px !important }
@@ -1249,11 +1269,12 @@ body.light .theme-btn{background:#e2e8f0}
     <div class="card card-accent-purple" style="animation-delay:.25s">
       <div class="card-header">
         <div class="card-icon purple">🗓</div>
-        <h2>Saved Days</h2>
+        <h2 onclick="savedDaysToggle()" style="cursor:pointer;flex:1">Saved Days <span id="savedDaysChevron" style="font-size:11px;color:var(--muted);display:none">&#9660;</span></h2>
         <div class="saved-days-search">
           <input id="jump" class="saved-days-jump" type="text" placeholder="&#128269; Search date…" autocomplete="off" spellcheck="false"/>
         </div>
       </div>
+      <div id="savedDaysBody">
       <div class="history-wrap">
         <table>
           <thead><tr><th>Date</th><th>Note</th><th>Total</th><th>Actions</th></tr></thead>
@@ -1262,6 +1283,7 @@ body.light .theme-btn{background:#e2e8f0}
       </div>
 
     </div>
+      </div><!-- /savedDaysBody -->
 
   </div>
 
@@ -3012,6 +3034,18 @@ const PROD_ESS = {
 
 var statsOpen = false;
 var statsCurrentTab = 'inv';
+
+
+function savedDaysToggle(){
+  // Only collapse on mobile
+  if(window.innerWidth > 720) return;
+  var body    = document.getElementById('savedDaysBody');
+  var chevron = document.getElementById('savedDaysChevron');
+  if(!body) return;
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  chevron.style.transform = open ? 'rotate(-90deg)' : '';
+}
 
 function statsToggle(){
   var body    = document.getElementById('statsBody');
