@@ -341,6 +341,8 @@ button:active{transform:translateY(1px) scale(.98)}
 .btn-danger:hover{background:rgba(248,113,113,.2)}
 .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
 .btn-ghost:hover{color:var(--ink);border-color:var(--border2)}
+.btn-tip{background:linear-gradient(135deg,#0ea5e9,#38bdf8);color:#0a1628;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(56,189,248,.25)}
+.btn-tip:hover{box-shadow:0 4px 20px rgba(56,189,248,.4);transform:translateY(-1px)}
 
 /* ── main grid ── */
 .main-grid{
@@ -386,36 +388,14 @@ td{
   padding:9px 16px;
   vertical-align:middle;
 }
-tbody td.td-name{
-  font-weight:700;
+.td-name{
+  font-weight:600;
   font-size:13px;
-  color:#fde68a!important;
-  letter-spacing:.01em;
+  color:var(--ink);
 }
-body.light tbody td.td-name{
-  color:#92400e!important;
-}
-/* qty-wrap: input + unit badge inline */
-.qty-wrap{display:flex;align-items:center;gap:5px}
-.qty-unit{
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  color:var(--muted2);
-  background:var(--surface3);
-  border-radius:5px;
-  padding:2px 6px;
-  white-space:nowrap;
-  opacity:0;
-  transform:scale(.85);
-  transition:opacity .2s,transform .2s;
-}
-.qty-unit.active{
-  opacity:1;
-  transform:scale(1);
-  color:var(--accent);
-  background:rgba(56,189,248,.12);
+.td-unit{
+  font-size:12px;
+  color:var(--muted);
 }
 .td-value{font-weight:700;font-size:13px;color:var(--accent3)}
 .td-value.empty{color:var(--muted2);font-weight:400}
@@ -459,30 +439,6 @@ td input:focus{
 .action-btns{display:flex;gap:6px;flex-wrap:wrap}
 .action-btns button{padding:5px 10px;font-size:11px;font-weight:700;border-radius:7px}
 
-/* ── tips ── */
-.tips-section{padding:16px 20px}
-.tip-item{
-  display:flex;
-  align-items:flex-start;
-  gap:10px;
-  padding:10px 0;
-  border-bottom:1px solid var(--border);
-}
-.tip-item:last-child{border-bottom:none;padding-bottom:0}
-.tip-badge{
-  display:inline-flex;
-  align-items:center;
-  padding:3px 10px;
-  border-radius:999px;
-  background:rgba(56,189,248,.12);
-  color:var(--accent);
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.04em;
-  white-space:nowrap;
-  flex-shrink:0;
-}
-.tip-text{font-size:12px;color:var(--muted);line-height:1.5}
 
 /* ── footer ── */
 .table-footer{
@@ -645,14 +601,16 @@ body.light .logo-text h1:hover,body.light .logo-text p:hover{
 .footer-tools{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:1px;
-  background:var(--border);
+  gap:0;
+  background:transparent;
 }
 @media(max-width:640px){.footer-tools{grid-template-columns:1fr}}
 .footer-group{
   padding:20px;
-  background:var(--surface);
+  background:transparent;
+  border-right:1px solid var(--border);
 }
+.footer-group:last-child{border-right:none}
 .footer-group-label{
   font-size:11px;
   font-weight:700;
@@ -663,7 +621,7 @@ body.light .logo-text h1:hover,body.light .logo-text p:hover{
 }
 .danger-label{color:var(--bad)}
 .footer-btns{display:flex;flex-wrap:wrap;gap:8px}
-.footer-group-danger{background:rgba(248,113,113,.03)}
+.footer-group-danger{background:transparent}
 .danger-note{
   font-size:11px;
   color:var(--muted2);
@@ -765,6 +723,297 @@ body.light .sticky-bar{background:rgba(240,244,248,.85)}
 .sticky-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .sticky-val{font-size:20px;font-weight:800;color:var(--accent3)}
 
+
+/* ── tiny tips bar ── */
+.tiny-tips-bar{position:relative;z-index:1;max-width:1400px;margin:0 auto 8px;padding:0 20px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;opacity:.3;transition:opacity .25s}
+.tiny-tips-bar:hover{opacity:.7}
+.tiny-tip{font-size:10px;color:var(--muted2);letter-spacing:.01em}
+.tiny-tip b{font-weight:700;color:var(--muted)}
+.tiny-tip-sep{font-size:10px;color:var(--muted2);opacity:.3}
+@media(max-width:720px){.tiny-tips-bar{display:none}}
+
+/* ════════════ MILK VIEW ════════════ */
+.mode-switcher{display:flex;align-items:center;background:var(--surface3);border:1px solid var(--border);border-radius:999px;padding:3px;gap:2px;flex-shrink:0}
+.mode-btn{padding:6px 16px;border-radius:999px;border:none;background:transparent;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--muted);cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.mode-btn.active{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;box-shadow:0 2px 12px rgba(129,140,248,.35)}
+.mode-btn:hover:not(.active){color:var(--ink)}
+.milk-wrap{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:24px 20px;display:grid;gap:20px}
+.milk-stats-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.milk-stats-row{grid-template-columns:1fr}}
+.milk-stat{position:relative;padding:22px 24px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);overflow:hidden;animation:fadeUp .45s ease both;transition:all .25s}
+.milk-stat::after{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;transform:translate(30px,-30px);opacity:.12}
+.milk-stat-blue{background:rgba(56,189,248,.08);border-color:rgba(56,189,248,.2)}
+.milk-stat-blue::after{background:var(--accent)}
+.milk-stat-blue .milk-stat-val{color:var(--accent)}
+.milk-stat-purple{background:rgba(129,140,248,.08);border-color:rgba(129,140,248,.2)}
+.milk-stat-purple::after{background:var(--accent2)}
+.milk-stat-purple .milk-stat-val{color:var(--accent2)}
+body.light .milk-stat{background:rgba(255,255,255,.55);border-color:rgba(0,0,0,.08)}
+.milk-stat-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.milk-stat-val{font-size:28px;font-weight:800;line-height:1}
+.milk-stat-sub{font-size:11px;color:var(--muted2);margin-top:6px}
+.milk-flavour-card{background:rgba(17,24,39,.55);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);box-shadow:var(--card-shadow);overflow:hidden;animation:fadeUp .4s ease both}
+body.light .milk-flavour-card{background:rgba(255,255,255,.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-color:rgba(0,0,0,.07)}
+.milk-flav-header{display:flex;align-items:center;gap:10px;padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+.milk-flav-header h2{font-size:15px;font-weight:700;color:var(--ink)}
+.milk-flav-hint{font-size:11px;color:var(--muted2);margin-left:auto}
+.milk-flav-pills{display:flex;flex-wrap:wrap;gap:10px;padding:16px 20px}
+.milk-flav-pill{padding:9px 22px;border-radius:999px;border:2px solid var(--border);background:var(--surface2);font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:7px;letter-spacing:.01em}
+.milk-flav-pill:hover{border-color:var(--border2);color:var(--ink);transform:translateY(-1px)}
+.milk-flav-pill.active{color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(0,0,0,.25);transform:translateY(-2px) scale(1.03)}
+.milk-flav-pill[data-flav="Vanilla"].active{background:linear-gradient(135deg,#0ea5e9,#38bdf8)}
+.milk-flav-pill[data-flav="Pista"].active{background:linear-gradient(135deg,#10b981,#34d399)}
+.milk-flav-pill[data-flav="Strawberry"].active{background:linear-gradient(135deg,#e11d48,#fb7185)}
+.milk-flav-pill[data-flav="Butterscotch"].active{background:linear-gradient(135deg,#d97706,#f59e0b)}
+.milk-flav-pill[data-flav="Chocolate"].active{background:linear-gradient(135deg,#78350f,#92400e);color:#fde68a}
+.milk-flav-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.milk-flav-pill[data-flav="Vanilla"] .milk-flav-dot{background:#38bdf8}
+.milk-flav-pill[data-flav="Pista"] .milk-flav-dot{background:#34d399}
+.milk-flav-pill[data-flav="Strawberry"] .milk-flav-dot{background:#fb7185}
+.milk-flav-pill[data-flav="Butterscotch"] .milk-flav-dot{background:#f59e0b}
+.milk-flav-pill[data-flav="Chocolate"] .milk-flav-dot{background:#92400e}
+.milk-table-card{background:rgba(17,24,39,.55);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);border:1px solid rgba(255,255,255,.08);border-top:2px solid var(--accent3);border-radius:var(--radius);box-shadow:var(--card-shadow);overflow:hidden;animation:fadeUp .5s ease both}
+body.light .milk-table-card{background:rgba(255,255,255,.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-color:rgba(0,0,0,.07)}
+.milk-table-header{display:flex;align-items:center;gap:10px;padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+.milk-table-header h2{font-size:15px;font-weight:700;color:var(--ink);flex:1}
+.milk-clear-icon{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2);color:var(--bad);border-radius:var(--radius-sm);padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;transition:all .18s}
+.milk-clear-icon:hover{background:rgba(248,113,113,.2)}
+.milk-table-wrap{overflow-x:auto;padding-bottom:4px}
+#milkTable{width:100%;border-collapse:collapse;min-width:480px}
+#milkTable thead th{position:sticky;top:0;background:var(--surface);padding:10px 16px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap}
+body.light #milkTable thead th{background:var(--surface)}
+#milkTable tbody tr{border-bottom:1px solid var(--border);transition:background .15s;animation:rowIn .2s ease both}
+#milkTable tbody tr:last-child{border-bottom:none}
+#milkTable tbody tr:hover{background:var(--surface2)}
+#milkTable tbody tr.milk-has-qty{background:rgba(56,189,248,.04)}
+#milkTable tbody tr.milk-has-qty:hover{background:rgba(56,189,248,.08)}
+#milkTable td{padding:9px 16px;vertical-align:middle}
+.milk-td-name{font-weight:700;font-size:13px;color:#fde68a;letter-spacing:.01em}
+body.light .milk-td-name{color:#92400e}
+.milk-td-milk{font-weight:700;font-size:13px;color:var(--accent)}
+.milk-td-milk.empty{color:var(--muted2);font-weight:400}
+.milk-td-ess{font-weight:700;font-size:13px;color:var(--accent2)}
+.milk-td-ess.empty{color:var(--muted2);font-weight:400}
+.milk-qty-wrap{display:flex;align-items:center;gap:5px}
+.milk-qty-input{width:80px;padding:7px 10px;font-size:13px;background:var(--surface3);border:1px solid var(--border);border-radius:8px;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;text-align:right;font:inherit}
+.milk-qty-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+.milk-unit-tag{font-size:11px;font-weight:700;color:var(--muted2);letter-spacing:.06em;text-transform:uppercase}
+#milkTable tfoot td{padding:10px 16px;border-top:2px solid var(--border)}
+.milk-foot-val{font-weight:800;font-size:14px;color:var(--accent3)}
+
+
+/* ── saved days search ── */
+.saved-days-search{margin-left:auto}
+.saved-days-jump{
+  font:inherit;
+  font-size:12px;
+  font-weight:600;
+  padding:6px 14px;
+  background:var(--surface3);
+  border:1px solid var(--border2);
+  border-radius:999px;
+  color:var(--accent2);
+  outline:none;
+  cursor:text;
+  transition:border-color .2s,box-shadow .2s,background .2s;
+  letter-spacing:.02em;
+  width:160px;
+}
+.saved-days-jump::placeholder{color:var(--accent2);opacity:.7}
+.saved-days-jump:focus,.saved-days-jump:hover{
+  border-color:var(--accent2);
+  box-shadow:0 0 0 2px rgba(129,140,248,.15);
+  background-color:rgba(129,140,248,.08);
+}
+body.light .saved-days-jump{background-color:#edf2f7;color:#4338ca}
+body.light .saved-days-jump:hover{background-color:rgba(129,140,248,.1)}
+
+
+/* ── milk enhancements ── */
+
+/* side-by-side layout: stats + flavour on desktop */
+.milk-top-row{display:grid;grid-template-columns:1fr 1.2fr;gap:20px;align-items:start}
+@media(max-width:860px){.milk-top-row{grid-template-columns:1fr}}
+
+/* stat card watermark icon */
+.milk-stat{position:relative;overflow:hidden}
+.milk-stat-icon{
+  position:absolute;right:-10px;bottom:-10px;
+  font-size:72px;line-height:1;
+  opacity:.06;pointer-events:none;
+  user-select:none;
+}
+
+/* milk table enhancements */
+.milk-td-name{color:#fde68a!important}
+body.light .milk-td-name{color:#92400e!important}
+#milkTable tbody tr.milk-has-qty{background:rgba(56,189,248,.04)}
+#milkTable tbody tr.milk-has-qty:hover{background:rgba(56,189,248,.09)}
+
+/* milk value tiers */
+.milk-td-milk.tier-high{color:#34d399;font-weight:800}
+.milk-td-milk.tier-mid{color:#fbbf24;font-weight:700}
+.milk-td-milk.tier-low{color:var(--accent)}
+.milk-td-ess{color:var(--accent2)!important}
+.milk-td-ess.empty{color:var(--muted2)!important;font-weight:400}
+
+/* flavour pill active glow */
+.milk-flav-pill[data-flav="Vanilla"].active{box-shadow:0 4px 18px rgba(56,189,248,.5)}
+.milk-flav-pill[data-flav="Pista"].active{box-shadow:0 4px 18px rgba(52,211,153,.5)}
+.milk-flav-pill[data-flav="Strawberry"].active{box-shadow:0 4px 18px rgba(251,113,133,.5)}
+.milk-flav-pill[data-flav="Butterscotch"].active{box-shadow:0 4px 18px rgba(245,158,11,.5)}
+.milk-flav-pill[data-flav="Chocolate"].active{box-shadow:0 4px 18px rgba(146,64,14,.5)}
+
+/* empty state */
+.milk-empty-state{
+  padding:32px 20px;
+  text-align:center;
+  color:var(--muted2);
+  font-size:13px;
+  letter-spacing:.02em;
+}
+.milk-empty-icon{font-size:36px;display:block;margin-bottom:10px;opacity:.35}
+
+
+/* ── add product card ── */
+.milk-add-card{
+  background:rgba(17,24,39,.55);
+  backdrop-filter:blur(24px) saturate(1.6);
+  -webkit-backdrop-filter:blur(24px) saturate(1.6);
+  border:1px solid rgba(255,255,255,.08);
+  border-top:2px solid var(--accent);
+  border-radius:var(--radius);
+  box-shadow:var(--card-shadow);
+  overflow:hidden;
+  animation:fadeUp .5s ease both;
+}
+body.light .milk-add-card{
+  background:rgba(255,255,255,.6);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-color:rgba(0,0,0,.07);
+}
+.milk-add-header{
+  display:flex;align-items:center;gap:10px;
+  padding:16px 20px;
+  cursor:pointer;
+  user-select:none;
+  transition:background .15s;
+}
+.milk-add-header:hover{background:rgba(255,255,255,.03)}
+.milk-add-header h2{font-size:15px;font-weight:700;color:var(--ink)}
+.milk-add-hint{font-size:11px;color:var(--muted2);margin-left:4px}
+.milk-add-chevron{margin-left:auto;font-size:12px;color:var(--muted);transition:transform .25s}
+.milk-add-chevron.open{transform:rotate(180deg)}
+.milk-add-body{padding:0 20px 20px}
+.milk-add-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  padding:16px 0 12px;
+}
+@media(max-width:900px){.milk-add-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.milk-add-grid{grid-template-columns:1fr}}
+.milk-add-field{display:flex;flex-direction:column;gap:5px}
+.milk-add-label{
+  font-size:10px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);
+}
+.milk-add-input{
+  font:inherit;
+  padding:8px 12px;
+  background:var(--surface3);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  color:var(--ink);
+  font-size:13px;
+  outline:none;
+  transition:border-color .15s,box-shadow .15s;
+  width:100%;
+  -webkit-appearance:none;
+}
+.milk-add-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.12)}
+.milk-add-hint-row{margin-bottom:12px}
+.milk-add-note{font-size:11px;color:var(--muted2);line-height:1.5}
+.milk-add-actions{display:flex;gap:10px;align-items:center;margin-bottom:16px}
+/* custom products list */
+
+
+
+/* ── manage products tabs ── */
+.milk-mgmt-tabs{display:flex;gap:6px;padding:14px 0 12px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.milk-mgmt-tab{
+  padding:6px 18px;border-radius:999px;border:1px solid var(--border);
+  background:transparent;font:inherit;font-size:12px;font-weight:700;
+  color:var(--muted);cursor:pointer;transition:all .18s;letter-spacing:.03em;
+}
+.milk-mgmt-tab:hover{color:var(--ink);border-color:var(--border2)}
+.milk-mgmt-tab.active{
+  background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.3);
+  color:var(--accent);
+}
+.milk-mgmt-panel{animation:fadeUp .2s ease both}
+
+/* all products list */
+.milk-all-prod-list{display:flex;flex-direction:column;gap:6px;padding:4px 0 8px}
+.milk-prod-row{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 14px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  transition:border-color .15s,background .15s;
+}
+.milk-prod-row:hover{border-color:var(--border2);background:var(--surface3)}
+.milk-prod-row-name{font-weight:700;font-size:13px;color:#fde68a;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.light .milk-prod-row-name{color:#92400e}
+.milk-prod-row-meta{font-size:11px;color:var(--muted);white-space:nowrap}
+.milk-prod-row-badge{
+  font-size:10px;font-weight:700;letter-spacing:.04em;
+  padding:2px 8px;border-radius:999px;
+  background:rgba(52,211,153,.1);color:var(--accent3);
+  white-space:nowrap;
+}
+.milk-prod-row-badge.custom{background:rgba(129,140,248,.1);color:var(--accent2)}
+.milk-prod-row-actions{display:flex;gap:5px;flex-shrink:0}
+.milk-prod-act-btn{
+  padding:4px 10px;border-radius:7px;font:inherit;font-size:11px;font-weight:700;
+  cursor:pointer;border:1px solid var(--border);background:var(--surface3);
+  color:var(--muted);transition:all .15s;
+}
+.milk-prod-act-btn:hover{color:var(--ink);border-color:var(--border2)}
+.milk-prod-act-btn.edit{color:var(--accent);border-color:rgba(56,189,248,.25);background:rgba(56,189,248,.06)}
+.milk-prod-act-btn.edit:hover{background:rgba(56,189,248,.14)}
+.milk-prod-act-btn.del{color:var(--bad);border-color:rgba(248,113,113,.2);background:rgba(248,113,113,.05)}
+.milk-prod-act-btn.del:hover{background:rgba(248,113,113,.15)}
+
+/* edit inline form */
+.milk-edit-form{
+  display:none;
+  flex-direction:column;gap:10px;
+  padding:12px 14px;
+  background:var(--surface3);
+  border:1px solid var(--accent);
+  border-radius:var(--radius-sm);
+  margin-top:4px;
+  animation:fadeUp .2s ease both;
+}
+.milk-edit-form.open{display:flex}
+.milk-edit-row{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+.milk-edit-field{display:flex;flex-direction:column;gap:4px;min-width:90px}
+.milk-edit-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.milk-edit-input{
+  font:inherit;font-size:12px;padding:5px 9px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:7px;color:var(--ink);outline:none;width:100%;
+  transition:border-color .15s;
+}
+.milk-edit-input:focus{border-color:var(--accent)}
+.milk-edit-actions{display:flex;gap:6px;margin-top:2px}
+.milk-edit-save{padding:5px 14px;background:linear-gradient(135deg,#0ea5e9,#38bdf8);color:#0a1628;border:none;border-radius:7px;font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+.milk-edit-cancel{padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:7px;font:inherit;font-size:11px;color:var(--muted);cursor:pointer}
+
 /* ── theme toggle ── */
 .theme-btn{
   position:relative;
@@ -823,6 +1072,10 @@ body.light .theme-btn{background:#e2e8f0}
     </div>
     <div style="display:flex;align-items:center;gap:12px">
       <div class="header-date" id="headerDate"></div>
+      <div class="mode-switcher">
+        <button class="mode-btn active" id="modeBtnInv">&#128194; Inventory</button>
+        <button class="mode-btn" id="modeBtnMilk">&#128249; Milk</button>
+      </div>
       <button class="theme-btn" id="themeToggle" title="Toggle theme">
         <div class="theme-btn-track"><span>🌙</span><span>☀</span></div>
         <div class="theme-btn-thumb"></div>
@@ -832,7 +1085,7 @@ body.light .theme-btn{background:#e2e8f0}
 </header>
 
 <canvas id="particles" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45"></canvas>
-<div class="wrap">
+<div id="inventoryView"><div class="wrap">
 
   <!-- stats row -->
   <div class="stats-row">
@@ -864,20 +1117,13 @@ body.light .theme-btn{background:#e2e8f0}
         <label for="search">Search products</label>
         <input id="search" type="search" placeholder="Filter by product name…"/>
       </div>
-      <div class="field">
-        <label for="note">Note</label>
-        <input id="note" type="text" placeholder="Optional note for this day"/>
-      </div>
-      <div class="field">
-        <label for="jump">Jump to saved day</label>
-        <select id="jump"></select>
-      </div>
+
     </div>
     <div class="toolbar">
-      <button id="newDay" class="btn-ghost">＋ New Day</button>
-      <button id="saveDay" class="btn-success" id="saveDay"><span id="saveBtnLabel">✓ Save Day</span></button>
+      <button id="newDay" class="btn-tip">＋ New Day</button>
+      <button id="saveDay" class="btn-success"><span id="saveBtnLabel">✓ Save Day</span></button>
       <span style="flex:1"></span>
-      <button id="duplicateDay" class="btn-secondary">⧉ Duplicate</button>
+      <button id="duplicateDay" class="btn-ghost">⧉ Duplicate</button>
     </div>
   </div>
 
@@ -901,6 +1147,7 @@ body.light .theme-btn{background:#e2e8f0}
               <th>Product</th>
               <th>Qty</th>
               <th>Rate</th>
+              <th>Unit</th>
               <th>Value</th>
               <th class="th-alltotal">All-time</th>
             </tr>
@@ -915,6 +1162,9 @@ body.light .theme-btn{background:#e2e8f0}
       <div class="card-header">
         <div class="card-icon purple">🗓</div>
         <h2>Saved Days</h2>
+        <div class="saved-days-search">
+          <input id="jump" class="saved-days-jump" type="text" placeholder="&#128269; Search date…" autocomplete="off" spellcheck="false"/>
+        </div>
       </div>
       <div class="history-wrap">
         <table>
@@ -923,32 +1173,72 @@ body.light .theme-btn{background:#e2e8f0}
         </table>
       </div>
 
-      <div style="border-top:1px solid var(--border)">
-        <div class="tips-section">
-          <div class="tip-item">
-            <span class="tip-badge">Autosave</span>
-            <span class="tip-text">Use Save Day to store. New Day clears inputs. Duplicate copies today's entries.</span>
-          </div>
-          <div class="tip-item">
-            <span class="tip-badge">Backup</span>
-            <span class="tip-text">Export CSV for spreadsheets, or Backup JSON for a full copy you can restore later.</span>
-          </div>
-          <div class="tip-item">
-            <span class="tip-badge">iPhone</span>
-            <span class="tip-text">Open in Safari and Add to Home Screen for an app-like experience.</span>
-          </div>
-        </div>
-      </div>
     </div>
 
   </div>
 
   <!-- data tools -->
+  <!-- manage inventory products -->
+  <div class="card card-accent-blue inv-manage-card" style="animation-delay:.35s">
+    <div class="card-header" id="invMgmtToggle" style="cursor:pointer;user-select:none" onclick="invMgmtToggle()">
+      <div class="card-icon blue">&#9881;</div>
+      <h2>Manage Products</h2>
+      <span style="font-size:11px;color:var(--muted2);margin-left:4px">Add, edit or remove inventory products</span>
+      <span id="invMgmtChevron" style="margin-left:auto;font-size:12px;color:var(--muted);transition:transform .25s">&#9660;</span>
+    </div>
+    <div id="invMgmtBody" style="display:none">
+
+      <!-- tabs -->
+      <div class="milk-mgmt-tabs" style="padding:0 20px">
+        <button class="milk-mgmt-tab active" id="invTabAll" onclick="invMgmtTab('all')">&#128230; All Products</button>
+        <button class="milk-mgmt-tab" id="invTabAdd" onclick="invMgmtTab('add')">&#43; Add New</button>
+      </div>
+
+      <!-- all products panel -->
+      <div id="invPanelAll" class="milk-mgmt-panel" style="padding:0 20px 20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 4px">
+          <span style="font-size:11px;color:var(--muted2)">Edit or remove any product from the inventory list</span>
+          <button class="milk-prod-act-btn" onclick="invResetDefaults()" style="font-size:10px;opacity:.6" title="Restore removed built-in products">&#8635; Reset to defaults</button>
+        </div>
+        <div id="invAllProdList" class="milk-all-prod-list"></div>
+      </div>
+
+      <!-- add new panel -->
+      <div id="invPanelAdd" class="milk-mgmt-panel" style="display:none;padding:0 20px 20px">
+        <div class="milk-add-grid" style="padding-top:14px">
+          <div class="milk-add-field">
+            <label class="milk-add-label">Product Name</label>
+            <input id="invAddName" class="milk-add-input" type="text" placeholder="e.g. CHOCO BAR" autocomplete="off"/>
+          </div>
+          <div class="milk-add-field">
+            <label class="milk-add-label">Unit</label>
+            <select id="invAddUnit" class="milk-add-input">
+              <option value="bx">bx (box)</option>
+              <option value="unit">unit</option>
+              <option value="kg">kg</option>
+              <option value="ltr">ltr</option>
+            </select>
+          </div>
+          <div class="milk-add-field">
+            <label class="milk-add-label">Rate (&#8377;)</label>
+            <input id="invAddRate" class="milk-add-input" type="number" min="1" placeholder="e.g. 220"/>
+          </div>
+        </div>
+        <div class="milk-add-actions" style="margin-top:14px">
+          <button id="invAddSaveBtn" class="btn-tip">&#43; Add to Inventory</button>
+          <button class="btn-ghost" onclick="invAddClear()">Clear</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
   <div class="card footer-card card-accent-red" style="animation-delay:.3s">
-    <div class="card-header">
+    <div class="card-header" id="footerCardToggle" style="cursor:pointer;user-select:none" onclick="footerCardToggle()">
       <div class="card-icon blue">💾</div>
       <h2>Data &amp; Export</h2>
+      <span id="footerCardChevron" style="margin-left:auto;font-size:12px;color:var(--muted);transition:transform .25s">&#9660;</span>
     </div>
+    <div id="footerCardBody" style="display:none">
     <div class="footer-tools">
       <div class="footer-group">
         <div class="footer-group-label">Export</div>
@@ -967,9 +1257,18 @@ body.light .theme-btn{background:#e2e8f0}
         <p class="danger-note">These actions cannot be undone. Make sure you have a backup before resetting.</p>
       </div>
     </div>
+    </div>
   </div>
 
 
+<!-- tiny tips bar -->
+<div class="tiny-tips-bar">
+  <span class="tiny-tip">&#128161; <b>Autosave:</b> Save Day to store &middot; New Day clears &middot; Duplicate copies entries</span>
+  <span class="tiny-tip-sep">&middot;</span>
+  <span class="tiny-tip">&#128230; <b>Backup:</b> Export CSV or JSON</span>
+  <span class="tiny-tip-sep">&middot;</span>
+  <span class="tiny-tip">&#128241; <b>iPhone:</b> Safari &rarr; Add to Home Screen</span>
+</div>
 <!-- floating save fab -->
 <button id="fabSave" class="fab-save">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -982,6 +1281,138 @@ body.light .theme-btn{background:#e2e8f0}
   <span id="stickyVal" class="sticky-val">₹0</span>
 </div>
 
+</div></div>
+<div id="milkView" style="display:none">
+  <div class="milk-wrap">
+
+    <!-- stat cards: side by side -->
+    <div class="milk-stats-row">
+      <div class="milk-stat milk-stat-blue">
+        <div class="milk-stat-label">Total Milk Required</div>
+        <div class="milk-stat-val" id="milkTotalMlVal">0 ml</div>
+        <div class="milk-stat-sub">Across all products</div>
+        <span class="milk-stat-icon">&#127866;</span>
+      </div>
+      <div class="milk-stat milk-stat-purple">
+        <div class="milk-stat-label">Total Essence Required</div>
+        <div class="milk-stat-val" id="milkTotalEssVal">0 ml</div>
+        <div class="milk-stat-sub" id="milkTotalEssSub">Select a flavour below</div>
+        <span class="milk-stat-icon">&#129514;</span>
+      </div>
+    </div>
+
+    <!-- flavour selector -->
+    <div class="milk-flavour-card">
+      <div class="milk-flav-header">
+        <div class="card-icon yellow">&#127768;</div>
+        <h2>Batch Flavour</h2>
+        <span class="milk-flav-hint">Select flavour to calculate essence</span>
+      </div>
+      <div class="milk-flav-pills" id="milkFlavPills"></div>
+    </div>
+
+    <!-- batch entry table -->
+    <div class="milk-table-card">
+      <div class="milk-table-header">
+        <div class="card-icon green">&#128198;</div>
+        <h2>Batch Entry</h2>
+        <button id="milkClearBtn" class="milk-clear-icon">&#10005; Clear</button>
+      </div>
+      <div class="milk-table-wrap">
+        <table id="milkTable">
+          <thead>
+            <tr>
+              <th>Product</th><th>Qty</th><th>Milk Required</th><th id="milkEssHead">Essence Required</th>
+            </tr>
+          </thead>
+          <tbody id="milkRows"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" style="text-align:right;font-weight:700;color:var(--muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase">TOTAL</td>
+              <td id="milkFootMilk" class="milk-foot-val">—</td>
+              <td id="milkFootEss" class="milk-foot-val">—</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- add custom product -->
+    <div class="milk-add-card" id="milkAddCard">
+      <div class="milk-add-header" id="milkAddToggle">
+        <div class="card-icon blue">&#43;</div>
+        <h2>Manage Products</h2>
+        <span class="milk-add-hint">Add, edit or remove products from the batch list</span>
+        <span class="milk-add-chevron" id="milkAddChevron">&#9660;</span>
+      </div>
+      <div class="milk-add-body" id="milkAddBody" style="display:none">
+
+        <!-- tabs -->
+        <div class="milk-mgmt-tabs">
+          <button class="milk-mgmt-tab active" id="milkTabAll" onclick="milkMgmtTab('all')">&#128230; All Products</button>
+          <button class="milk-mgmt-tab" id="milkTabAdd" onclick="milkMgmtTab('add')">&#43; Add New</button>
+        </div>
+
+        <!-- all products panel -->
+        <div id="milkPanelAll" class="milk-mgmt-panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 4px">
+            <span style="font-size:11px;color:var(--muted2)">Edit or remove any product from the batch list</span>
+            <button class="milk-prod-act-btn" onclick="milkResetDefaults()" style="font-size:10px;opacity:.6" title="Restore all removed built-in products">&#8635; Reset to defaults</button>
+          </div>
+          <div id="milkAllProdList" class="milk-all-prod-list"></div>
+        </div>
+
+        <!-- add new panel -->
+        <div id="milkPanelAdd" class="milk-mgmt-panel" style="display:none">
+        <div class="milk-add-grid">
+          <div class="milk-add-field">
+            <label class="milk-add-label">Product Name</label>
+            <input id="milkAddName" class="milk-add-input" type="text" placeholder="e.g. Choco Bar" autocomplete="off"/>
+          </div>
+          <div class="milk-add-field">
+            <label class="milk-add-label">Unit</label>
+            <select id="milkAddUnit" class="milk-add-input">
+              <option value="bx">bx (box)</option>
+              <option value="unit">unit</option>
+            </select>
+          </div>
+          <div class="milk-add-field">
+            <label class="milk-add-label">Milk per unit (ml)</label>
+            <input id="milkAddMilk" class="milk-add-input" type="number" min="1" placeholder="e.g. 600"/>
+          </div>
+          <div class="milk-add-field">
+            <label class="milk-add-label">Vanilla essence / unit (ml)</label>
+            <input id="milkAddVanilla" class="milk-add-input" type="number" min="0" step="0.001" placeholder="auto"/>
+          </div>
+          <div class="milk-add-field">
+            <label class="milk-add-label">Pista essence / unit (ml)</label>
+            <input id="milkAddPista" class="milk-add-input" type="number" min="0" step="0.001" placeholder="auto"/>
+          </div>
+          <div class="milk-add-field">
+            <label class="milk-add-label">Strawberry essence / unit (ml)</label>
+            <input id="milkAddStraw" class="milk-add-input" type="number" min="0" step="0.001" placeholder="auto"/>
+          </div>
+          <div class="milk-add-field">
+            <label class="milk-add-label">Butterscotch essence / unit (ml)</label>
+            <input id="milkAddButter" class="milk-add-input" type="number" min="0" step="0.001" placeholder="auto"/>
+          </div>
+          <div class="milk-add-field">
+            <label class="milk-add-label">Chocolate essence / unit (ml)</label>
+            <input id="milkAddChoc" class="milk-add-input" type="number" min="0" step="0.001" placeholder="auto"/>
+          </div>
+        </div>
+        <div class="milk-add-hint-row">
+          <span class="milk-add-note">Leave essence fields blank to auto-calculate from standard rates (Vanilla=60ml/20L, others=50ml/20L)</span>
+        </div>
+        <div class="milk-add-actions">
+          <button id="milkAddSaveBtn" class="btn-tip">&#43; Add to Batch List</button>
+          <button id="milkAddClearBtn" class="btn-ghost">Clear</button>
+        </div>
+        </div><!-- /milkPanelAdd -->
+      </div><!-- /milkAddBody -->
+    </div><!-- /milkAddCard -->
+
+  </div>
 </div>
 
 <script>
@@ -1027,8 +1458,6 @@ function animateCount(el, targetStr){
   }
   requestAnimationFrame(step);
 }
-
-
 
 // ── top product badge ──
 function updateTopProduct(date){
@@ -1113,7 +1542,6 @@ state.days ||= {};
 const el = {
   date: document.getElementById('date'),
   search: document.getElementById('search'),
-  note: document.getElementById('note'),
   jump: document.getElementById('jump'),
   rows: document.getElementById('rows'),
   daysTable: document.getElementById('daysTable'),
@@ -1172,9 +1600,10 @@ function animateStat(el, newText){
 }
 
 function renderRows(date){
+  const activeProds = invAllProds();
   const q = (el.search.value||'').trim().toLowerCase();
   const day = ensureDay(date);
-  const filtered = PRODUCTS.filter(p=>p.name.toLowerCase().includes(q));
+  const filtered = activeProds.filter(p=>p.name.toLowerCase().includes(q));
 
   el.rows.innerHTML = filtered.map(p => {
     const e = day.entries?.[p.name] || {quantity:'',rate:p.rate};
@@ -1188,8 +1617,9 @@ function renderRows(date){
     const atHas = at.qty > 0;
     return `<tr data-name="${p.name}" class="${hasQty?('has-qty val-tier-'+tier):''}" style="animation-delay:${rowIdx*18}ms">
       <td class="td-name">${p.name}</td>
-      <td><div class="qty-wrap"><input class="qty" type="number" min="0" step="1" inputmode="numeric" value="${qty}"><span class="qty-unit ${qty!==''&&Number(qty)>0?'active':''}">${p.unit}</span></div></td>
+      <td><input class="qty" type="number" min="0" step="1" inputmode="numeric" value="${qty}"></td>
       <td><input class="rate" type="number" min="0" step="1" inputmode="decimal" value="${rate}"></td>
+      <td class="td-unit">${p.unit}</td>
       <td class="td-value ${hasQty?'':'empty'}">${hasQty?fmt(val):'—'}</td>
       <td class="td-alltotal ${atHas?'':'empty'}"><span class="alltime-pill ${atHas?'':'zero'}" title="All-time: ${at.qty} ${p.unit} · ${fmt(at.val)}">${atHas?at.qty+' '+p.unit:'—'}</span></td>
     </tr>`;
@@ -1211,8 +1641,6 @@ function liveUpdate(date){
     const tier2 = hasQty ? getValueTier(qty*rate) : '';
     valCell.className = 'td-value'+(hasQty?' val-'+tier2:' empty');
     tr.className = hasQty ? 'has-qty val-tier-'+tier2 : '';
-    const unitBadge = tr.querySelector('.qty-unit');
-    if(unitBadge) unitBadge.classList.toggle('active', hasQty);
     // refresh all-time pill (rate changes can affect value)
     const atCell = tr.querySelector('.td-alltotal');
     if(atCell){
@@ -1247,6 +1675,7 @@ function renderDays(){
   el.daysTable.innerHTML = entries.length
     ? entries.map(([d,day])=>{
         const t=dayTotal(day);
+        const dIdx = Object.keys(state.days).sort().indexOf(d);
         return `<tr>
           <td>${fmtDate(d)}</td>
           <td style="color:var(--muted);font-size:12px">${escapeHtml(day.note||'')}</td>
@@ -1269,15 +1698,11 @@ function renderDays(){
   el.daysTable.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>deleteDay(b.dataset.del));
 }
 
-function updateJump(){
-  if([...el.jump.options].some(o=>o.value===el.date.value)) el.jump.value=el.date.value;
-  else el.jump.value='';
-}
+function updateJump(){} // no-op: jump is now a search input
 
 function loadDay(date){
   const d=normDate(date);
   const day=ensureDay(d);
-  el.note.value=day.note||'';
   renderRows(d);
   updateSummary(d);
   updateJump();
@@ -1287,7 +1712,7 @@ function loadDay(date){
 function saveCurrentDay(){
   const d=normDate(el.date.value);
   const day=ensureDay(d);
-  day.note=el.note.value.trim();
+  day.note='';
   const entries={};
   PRODUCTS.forEach(p=>{
     const row=el.rows.querySelector(`tr[data-name="${CSS.escape(p.name)}"]`);
@@ -1323,7 +1748,6 @@ function duplicateDay(source){
 
 function newDay(){
   el.date.value=todayISO();
-  el.note.value='';
   renderRows(el.date.value);
   updateSummary(el.date.value);
   updateHeaderDate();
@@ -1372,13 +1796,8 @@ function download(filename,text,type){
 
 el.date.addEventListener('change',()=>loadDay(el.date.value));
 el.search.addEventListener('input',()=>renderRows(el.date.value));
-el.note.addEventListener('input',()=>{
-  ensureDay(el.date.value).note=el.note.value;
-  persist();renderDays();updateJump();
-});
-el.jump.addEventListener('change',()=>{
-  if(el.jump.value){el.date.value=el.jump.value;loadDay(el.date.value);}
-});
+el.jump.addEventListener('input', debounceJump);
+el.jump.addEventListener('keydown', e=>{ if(e.key==='Enter'){ jumpSearch(); el.jump.blur(); } });
 
 document.getElementById('saveDay').onclick=saveCurrentDay;
 document.getElementById('newDay').onclick=newDay;
@@ -1504,10 +1923,697 @@ applyTheme(localStorage.getItem(THEME_KEY)||'dark');
   draw();
 })();
 
+
+// ════════════ MILK ESTIMATE ════════════
+const MILK_STORE = 'coolpoint_milk_v2';
+const MILK_PRODS = [
+  {name:'Small Cup',          unit:'bx',   milk:600 },
+  {name:'Big Cup',            unit:'bx',   milk:600 },
+  {name:'Sundae',             unit:'bx',   milk:500 },
+  {name:'Small Cone',         unit:'bx',   milk:720 },
+  {name:'Big Cone',           unit:'bx',   milk:680 },
+  {name:'Family Pack 400ml',  unit:'unit', milk:175 },
+  {name:'Family Pack 700ml',  unit:'unit', milk:306 },
+  {name:'Family Pack 1250ml', unit:'unit', milk:547 },
+  {name:'Bulk 5ltr',          unit:'unit', milk:2000},
+];
+// Essence rates: Vanilla=60ml/20L, Chocolate=60ml/20L, others=50ml/20L
+const MILK_ESS = {
+  'Small Cup':         {Vanilla:1.8, Pista:1.5, Strawberry:1.5, Butterscotch:1.5},
+  'Big Cup':           {Vanilla:1.8, Pista:1.5, Strawberry:1.5, Butterscotch:1.5},
+  'Sundae':            {Vanilla:1.5},
+  'Small Cone':        {Vanilla:2.16, Strawberry:1.8, Butterscotch:1.8, Chocolate:2.16},
+  'Big Cone':          {Vanilla:2.04, Pista:1.7, Strawberry:1.7, Butterscotch:1.7, Chocolate:2.04},
+  'Family Pack 400ml': {Vanilla:0.525, Pista:0.4375, Strawberry:0.4375, Butterscotch:0.4375},
+  'Family Pack 700ml': {Vanilla:0.918, Pista:0.765, Strawberry:0.765, Butterscotch:0.765},
+  'Family Pack 1250ml':{Vanilla:1.641, Pista:1.3675, Strawberry:1.3675, Butterscotch:1.3675},
+  'Bulk 5ltr':         {Vanilla:6.0, Pista:5.0, Strawberry:5.0, Butterscotch:5.0},
+};
+const FLAVOURS = [
+  {name:'Vanilla',      dot:'#38bdf8'},
+  {name:'Pista',        dot:'#34d399'},
+  {name:'Strawberry',   dot:'#fb7185'},
+  {name:'Butterscotch', dot:'#f59e0b'},
+  {name:'Chocolate',    dot:'#92400e'},
+];
+var milkState = JSON.parse(localStorage.getItem(MILK_STORE) || '{}');
+(function(){ var bad=false; Object.values(milkState).forEach(function(v){ if(typeof v==='object'&&v!==null) bad=true; }); if(bad){ milkState={}; } })();
+var milkFlavour = milkState.__flavour || 'Vanilla';
+function milkSave(){ milkState.__flavour = milkFlavour; localStorage.setItem(MILK_STORE, JSON.stringify(milkState)); }
+function fmtMl(ml){ if(ml<=0) return '—'; return ml>=1000 ? (ml/1000).toFixed(2)+' L' : ml%1===0 ? ml+' ml' : ml.toFixed(2)+' ml'; }
+function milkBuildFlavPills(){
+  var wrap = document.getElementById('milkFlavPills');
+  if(!wrap) return;
+  wrap.innerHTML = FLAVOURS.map(function(f){
+    return '<button class="milk-flav-pill'+(f.name===milkFlavour?' active':'')+'" data-flav="'+f.name+'">'
+      +'<span class="milk-flav-dot" style="background:'+f.dot+'"></span>'+f.name+'</button>';
+  }).join('');
+  wrap.querySelectorAll('.milk-flav-pill').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      milkFlavour = btn.dataset.flav;
+      milkSave();
+      wrap.querySelectorAll('.milk-flav-pill').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      milkUpdateAll();
+    });
+  });
+}
+function milkTier(ml){
+  if(ml >= 100000) return 'tier-high';
+  if(ml >= 30000)  return 'tier-mid';
+  return 'tier-low';
+}
+function milkBuildRows(){
+  var tbody = document.getElementById('milkRows');
+  if(!tbody) return;
+  var allProds = milkAllProds();
+  tbody.innerHTML = allProds.map(function(p,i){
+    var qty = +(milkState[p.name]||0);
+    var hasQty = qty>0;
+    var milkMl = hasQty ? qty*p.milk : 0;
+    var essRate = (MILK_ESS[p.name]||{})[milkFlavour];
+    var essMl = (hasQty&&essRate) ? qty*essRate : 0;
+    var milkClass = 'milk-td-milk' + (hasQty ? ' '+milkTier(milkMl) : ' empty');
+    var essClass  = 'milk-td-ess'  + ((hasQty&&essRate) ? '' : ' empty');
+    return '<tr class="'+(hasQty?'milk-has-qty':'')+'" data-prod="'+p.name+'" style="animation-delay:'+(i*18)+'ms">'
+      +'<td class="milk-td-name">'+p.name+'</td>'
+      +'<td><div class="milk-qty-wrap"><input class="milk-qty-input" type="number" min="0" step="1" inputmode="numeric"'
+      +' value="'+(qty||'')+'" placeholder="0" data-prod="'+p.name+'" data-milk="'+p.milk+'" data-unit="'+p.unit+'">'
+      +'<span class="milk-unit-tag">'+p.unit+'</span></div></td>'
+      +'<td class="'+milkClass+'" id="mmilk_'+p.name.replace(/\s/g,'_')+'">'+fmtMl(milkMl)+'</td>'
+      +'<td class="'+essClass+'" id="mess_'+p.name.replace(/\s/g,'_')+'">'+((hasQty&&essRate)?fmtMl(essMl):(essRate===undefined?'N/A':'—'))+'</td>'
+      +'</tr>';
+  }).join('');
+  document.querySelectorAll('.milk-qty-input').forEach(function(inp){
+    inp.addEventListener('input', function(){
+      var prod=inp.dataset.prod, milkR=parseFloat(inp.dataset.milk), qty=parseFloat(inp.value)||0;
+      milkState[prod]=qty; milkSave();
+      var tr=inp.closest('tr');
+      tr.className = qty>0?'milk-has-qty':'';
+      var mc=document.getElementById('mmilk_'+prod.replace(/\s/g,'_'));
+      var ec=document.getElementById('mess_'+prod.replace(/\s/g,'_'));
+      var mv=qty*milkR, essRate=(MILK_ESS[prod]||{})[milkFlavour], ev=essRate?qty*essRate:0;
+      if(mc){
+        mc.textContent=qty>0?fmtMl(mv):'—';
+        mc.className='milk-td-milk'+(qty>0?' '+milkTier(mv):' empty');
+      }
+      if(ec){ ec.textContent=qty>0?(essRate?fmtMl(ev):'N/A'):'—'; ec.className='milk-td-ess'+((qty>0&&essRate)?'':' empty'); }
+      milkUpdateTotals();
+    });
+  });
+}
+function animateMilkCount(el, targetMl){
+  var start = parseFloat(el.dataset.lastMl||'0') || 0;
+  el.dataset.lastMl = targetMl;
+  if(targetMl === start){ el.textContent = targetMl>0?fmtMl(targetMl):'0 ml'; return; }
+  var duration = 500, startTime = performance.now();
+  function step(now){
+    var p = Math.min((now-startTime)/duration,1);
+    var ease = 1-Math.pow(1-p,3);
+    var cur = start + (targetMl-start)*ease;
+    el.textContent = cur > 0 ? fmtMl(cur) : '0 ml';
+    if(p < 1) requestAnimationFrame(step);
+    else el.textContent = targetMl>0?fmtMl(targetMl):'0 ml';
+  }
+  requestAnimationFrame(step);
+}
+function milkUpdateTotals(){
+  var tm=0,te=0;
+  milkAllProds().forEach(function(p){ var q=+(milkState[p.name]||0); if(!q) return; tm+=q*p.milk; var r=(MILK_ESS[p.name]||{})[milkFlavour]; if(r) te+=q*r; });
+  var mv=document.getElementById('milkTotalMlVal'), ev=document.getElementById('milkTotalEssVal'), es=document.getElementById('milkTotalEssSub');
+  var fm=document.getElementById('milkFootMilk'), fe=document.getElementById('milkFootEss'), eh=document.getElementById('milkEssHead');
+  if(mv) animateMilkCount(mv, tm);
+  if(ev) animateMilkCount(ev, te);
+  if(es) es.textContent=milkFlavour+' essence';
+  if(eh) eh.textContent=milkFlavour+' Essence';
+  if(fm) fm.textContent=tm>0?fmtMl(tm):'—';
+  if(fe) fe.textContent=te>0?fmtMl(te):'—';
+}
+function milkUpdateAll(){
+  MILK_PRODS.forEach(function(p){
+    var qty=+(milkState[p.name]||0), ec=document.getElementById('mess_'+p.name.replace(/\s/g,'_'));
+    if(!ec) return;
+    var essRate=(MILK_ESS[p.name]||{})[milkFlavour], ev=essRate?qty*essRate:0;
+    ec.textContent=qty>0?(essRate?fmtMl(ev):'N/A'):'—';
+    ec.className='milk-td-ess'+((qty>0&&essRate)?'':' empty');
+  });
+  milkUpdateTotals();
+}
+function milkInit(){
+  // load custom products into MILK_ESS
+  milkCustomProds.forEach(function(p){ MILK_ESS[p.name]=p.ess; });
+  milkDeletedBuiltins = JSON.parse(localStorage.getItem(MILK_DELETED_STORE) || '[]');
+  milkBuildFlavPills(); milkBuildRows(); milkUpdateTotals();
+  milkAddInit();
+  milkRenderAllProds();
+  var cb=document.getElementById('milkClearBtn');
+  if(cb) cb.addEventListener('click',function(){
+    if(!confirm('Clear all milk estimate quantities?')) return;
+    milkAllProds().forEach(function(p){ delete milkState[p.name]; }); milkSave(); milkBuildRows(); milkUpdateTotals();
+  });
+}
+function switchMode(mode){
+  var inv=document.getElementById('inventoryView'), milk=document.getElementById('milkView');
+  var bi=document.getElementById('modeBtnInv'), bm=document.getElementById('modeBtnMilk');
+  if(mode==='milk'){
+    inv.style.display='none'; milk.style.display='block';
+    bi.className='mode-btn'; bm.className='mode-btn active';
+    milkBuildFlavPills(); milkBuildRows(); milkUpdateTotals(); milkRenderCustomList();
+  } else {
+    milk.style.display='none'; inv.style.display='block';
+    bi.className='mode-btn active'; bm.className='mode-btn';
+  }
+}
+
+
+// ── smart date search ──
+var jumpTimer = null;
+function debounceJump(){ clearTimeout(jumpTimer); jumpTimer = setTimeout(jumpSearch, 350); }
+
+function parseSearchDate(raw){
+  var s = raw.trim();
+  if(!s) return null;
+  var months = {
+    jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11,
+    january:0,february:1,march:2,april:3,june:5,july:6,august:7,
+    september:8,october:9,november:10,december:11
+  };
+  // Try ISO: 2026-05-24
+  var iso = s.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+  if(iso) return new Date(+iso[1], +iso[2]-1, +iso[3]);
+  // Try DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY
+  var dmy = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+  if(dmy) return new Date(+dmy[3], +dmy[2]-1, +dmy[1]);
+  // Try DD/MM/YY
+  var dmy2 = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2})$/);
+  if(dmy2) return new Date(2000 + +dmy2[3], +dmy2[2]-1, +dmy2[1]);
+  // Try MM/DD/YYYY
+  var mdy = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+  if(mdy) return new Date(+mdy[3], +mdy[1]-1, +mdy[2]);
+  // Try "24 May 2026" or "24 May" or "May 24 2026" or "May 24"
+  var parts = s.replace(/,/g,'').split(/\s+/);
+  var d2, m2, y2;
+  if(parts.length >= 2){
+    // Try "24 May 2026" or "24 May"
+    if(/^\d+$/.test(parts[0]) && months[parts[1].toLowerCase()] !== undefined){
+      d2 = +parts[0]; m2 = months[parts[1].toLowerCase()]; y2 = parts[2] ? +parts[2] : new Date().getFullYear();
+      return new Date(y2, m2, d2);
+    }
+    // Try "May 24 2026" or "May 24"
+    if(months[parts[0].toLowerCase()] !== undefined && /^\d+$/.test(parts[1])){
+      m2 = months[parts[0].toLowerCase()]; d2 = +parts[1]; y2 = parts[2] ? +parts[2] : new Date().getFullYear();
+      return new Date(y2, m2, d2);
+    }
+  }
+  // Try just a number — day of current month
+  if(/^\d{1,2}$/.test(s)){
+    var now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), +s);
+  }
+  return null;
+}
+
+function toISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+
+function jumpSearch(){
+  var raw = el.jump.value;
+  if(!raw.trim()){ highlightJumpRows(null); return; }
+  var parsed = parseSearchDate(raw);
+  if(!parsed || isNaN(parsed.getTime())){ highlightJumpRows(null); return; }
+  var iso = toISO(parsed);
+  if(state.days[iso]){
+    el.date.value = iso;
+    loadDay(iso);
+    el.jump.value = '';
+    el.jump.placeholder = '\u2713 ' + fmtDate(iso);
+    setTimeout(function(){ el.jump.placeholder = '\uD83D\uDD0D Search date\u2026'; }, 2000);
+  } else {
+    el.jump.style.borderColor = 'var(--bad)';
+    el.jump.style.boxShadow = '0 0 0 2px rgba(248,113,113,.15)';
+    setTimeout(function(){
+      el.jump.style.borderColor = '';
+      el.jump.style.boxShadow = '';
+    }, 1200);
+  }
+}
+
+function highlightJumpRows(iso){
+  document.querySelectorAll('#daysTable tr').forEach(function(tr){
+    tr.style.background = '';
+  });
+}
+
+
+// ── custom milk products ──
+const MILK_CUSTOM_STORE = 'coolpoint_milk_custom_v1';
+var milkCustomProds = JSON.parse(localStorage.getItem(MILK_CUSTOM_STORE) || '[]');
+
+function milkCustomSave(){
+  localStorage.setItem(MILK_CUSTOM_STORE, JSON.stringify(milkCustomProds));
+}
+
+function milkAutoEss(milkMl){
+  // auto-calculate from standard rates
+  return {
+    Vanilla:      parseFloat((milkMl * 60/20000).toFixed(4)),
+    Pista:        parseFloat((milkMl * 50/20000).toFixed(4)),
+    Strawberry:   parseFloat((milkMl * 50/20000).toFixed(4)),
+    Butterscotch: parseFloat((milkMl * 50/20000).toFixed(4)),
+    Chocolate:    parseFloat((milkMl * 60/20000).toFixed(4)),
+  };
+}
+
+function milkMgmtTab(tab){
+  document.getElementById('milkPanelAll').style.display = tab==='all' ? 'block' : 'none';
+  document.getElementById('milkPanelAdd').style.display = tab==='add' ? 'block' : 'none';
+  document.getElementById('milkTabAll').className = 'milk-mgmt-tab'+(tab==='all'?' active':'');
+  document.getElementById('milkTabAdd').className = 'milk-mgmt-tab'+(tab==='add'?' active':'');
+  if(tab==='all') milkRenderAllProds();
+}
+
+function milkRenderAllProds(){
+  var el2 = document.getElementById('milkAllProdList');
+  if(!el2) return;
+  var all = milkAllProds();
+  el2.innerHTML = all.map(function(p, i){
+    var isCustom = i >= MILK_PRODS.length;
+    var badge = isCustom
+      ? '<span class="milk-prod-row-badge custom">Custom</span>'
+      : '<span class="milk-prod-row-badge">Built-in</span>';
+    var actions = isCustom
+      ? '<button class="milk-prod-act-btn edit" data-ci="'+(i-MILK_PRODS.length)+'" onclick="milkToggleEdit(this)">Edit</button>'
+        +'<button class="milk-prod-act-btn del" data-ci="'+(i-MILK_PRODS.length)+'" onclick="milkDeleteCustom(this)">Remove</button>'
+      : '<button class="milk-prod-act-btn edit" data-bi="'+i+'" onclick="milkToggleEdit(this)">Edit</button>'
+        +'<button class="milk-prod-act-btn del" data-bi="'+i+'" onclick="milkDeleteBuiltin(this)">Remove</button>';
+
+    var essKeys = Object.keys(MILK_ESS[p.name]||{});
+    var essStr = essKeys.slice(0,3).map(function(f){
+      return f.slice(0,3)+': '+(MILK_ESS[p.name][f])+'ml';
+    }).join(' · ')+(essKeys.length>3?' …':'');
+
+    var pkey = p.name.replace(/\s/g,'_');
+    return '<div class="milk-prod-row-wrap" id="mprow_'+pkey+'">'
+      +'<div class="milk-prod-row">'
+      +'<span class="milk-prod-row-name" title="'+p.name+'">'+p.name+'</span>'
+      +'<span class="milk-prod-row-meta">'+p.milk+' ml/'+p.unit+'</span>'
+      +badge
+      +'<div class="milk-prod-row-actions">'+actions+'</div>'
+      +'</div>'
+      +'<div class="milk-edit-form" id="medit_'+pkey+'">'
+      +'<div class="milk-edit-row">'
+      +'<div class="milk-edit-field" style="flex:2;min-width:120px"><label class="milk-edit-label">Name</label>'
+      +'<input class="milk-edit-input" id="mename_'+pkey+'" value="'+p.name+'"></div>'
+      +'<div class="milk-edit-field"><label class="milk-edit-label">Milk (ml)</label>'
+      +'<input class="milk-edit-input" id="memilk_'+pkey+'" type="number" value="'+p.milk+'"></div>'
+      +'<div class="milk-edit-field"><label class="milk-edit-label">Unit</label>'
+      +'<select class="milk-edit-input" id="meunit_'+pkey+'">'
+      +'<option'+(p.unit==='bx'?' selected':'')+'>bx</option>'
+      +'<option'+(p.unit==='unit'?' selected':'')+'>unit</option>'
+      +'</select></div>'
+      +'</div>'
+      +'<div class="milk-edit-row">'
+      +['Vanilla','Pista','Strawberry','Butterscotch','Chocolate'].map(function(f){
+        var v=(MILK_ESS[p.name]||{})[f]||'';
+        return '<div class="milk-edit-field"><label class="milk-edit-label">'+f+'</label>'
+          +'<input class="milk-edit-input" id="meess_'+pkey+'_'+f+'" type="number" step="0.001" placeholder="auto" value="'+v+'"></div>';
+      }).join('')
+      +'</div>'
+      +'<div class="milk-edit-actions">'
+      +'<button class="milk-edit-save" onclick="milkSaveEdit(\'' +p.name+ '\')">&#10003; Save</button>'
+      +'<button class="milk-edit-cancel" onclick="milkCancelEdit(\'' +p.name+ '\')">Cancel</button>'
+      +'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function milkToggleEdit(btn){
+  var all = milkAllProds();
+  var idx = btn.dataset.bi !== undefined ? +btn.dataset.bi : MILK_PRODS.length + (+btn.dataset.ci);
+  var p = all[idx];
+  var form = document.getElementById('medit_'+p.name.replace(/\s/g,'_'));
+  if(!form) return;
+  var isOpen = form.classList.contains('open');
+  // close all other forms
+  document.querySelectorAll('.milk-edit-form.open').forEach(function(f){ f.classList.remove('open'); });
+  if(!isOpen) form.classList.add('open');
+}
+
+function milkSaveEdit(oldName){
+  var key = oldName.replace(/\s/g,'_');
+  var nameEl  = document.getElementById('mename_'+key);
+  var milkEl  = document.getElementById('memilk_'+key);
+  var unitEl  = document.getElementById('meunit_'+key);
+  var newName = nameEl ? nameEl.value.trim() : oldName;
+  var newMilk = parseFloat(milkEl ? milkEl.value : 0) || 0;
+  var newUnit = unitEl ? unitEl.value : 'bx';
+  var newEss  = {};
+  ['Vanilla','Pista','Strawberry','Butterscotch','Chocolate'].forEach(function(f){
+    var v = parseFloat((document.getElementById('meess_'+key+'_'+f)||{}).value) || 0;
+    if(v > 0) newEss[f] = v;
+  });
+  if(!newName || newMilk <= 0){ alert('Name and milk quantity are required.'); return; }
+
+  // Check if it's a built-in or custom
+  var builtinIdx = MILK_PRODS.findIndex(function(p){ return p.name===oldName; });
+  if(builtinIdx >= 0){
+    MILK_PRODS[builtinIdx].name = newName;
+    MILK_PRODS[builtinIdx].milk = newMilk;
+    MILK_PRODS[builtinIdx].unit = newUnit;
+  } else {
+    var ci = milkCustomProds.findIndex(function(p){ return p.name===oldName; });
+    if(ci >= 0){
+      milkCustomProds[ci].name = newName;
+      milkCustomProds[ci].milk = newMilk;
+      milkCustomProds[ci].unit = newUnit;
+      milkCustomProds[ci].ess  = newEss;
+      milkCustomSave();
+    }
+  }
+  // Update MILK_ESS
+  if(newName !== oldName){ delete MILK_ESS[oldName]; }
+  MILK_ESS[newName] = Object.keys(newEss).length ? newEss : milkAutoEss(newMilk);
+  // Transfer qty state
+  if(newName !== oldName && milkState[oldName] !== undefined){
+    milkState[newName] = milkState[oldName];
+    delete milkState[oldName];
+    milkSave();
+  }
+  milkBuildRows(); milkUpdateTotals(); milkRenderAllProds();
+}
+
+function milkCancelEdit(name){
+  var form = document.getElementById('medit_'+name.replace(/\s/g,'_'));
+  if(form) form.classList.remove('open');
+}
+
+function milkDeleteCustom(btn){
+  var ci = +btn.dataset.ci;
+  var name = milkCustomProds[ci].name;
+  if(!confirm('Remove "'+name+'" from the batch list?')) return;
+  milkCustomProds.splice(ci,1);
+  delete milkState[name];
+  delete MILK_ESS[name];
+  milkCustomSave(); milkSave();
+  milkBuildRows(); milkUpdateTotals(); milkRenderAllProds();
+}
+
+// Store deleted built-in indices in localStorage
+const MILK_DELETED_STORE = 'coolpoint_milk_deleted_v1';
+var milkDeletedBuiltins = JSON.parse(localStorage.getItem(MILK_DELETED_STORE) || '[]');
+
+function milkDeletedSave(){
+  localStorage.setItem(MILK_DELETED_STORE, JSON.stringify(milkDeletedBuiltins));
+}
+
+function milkDeleteBuiltin(btn){
+  var bi = +btn.dataset.bi;
+  var name = MILK_PRODS[bi].name;
+  if(!confirm('Remove "'+name+'" from the batch list?\n\nYou can restore it later using \'Reset to defaults\'.')) return;
+  milkDeletedBuiltins.push(bi);
+  milkDeletedSave();
+  delete milkState[name];
+  milkSave();
+  milkBuildRows(); milkUpdateTotals(); milkRenderAllProds();
+}
+
+function milkAllProds(){
+  return MILK_PRODS.filter(function(p,i){ return milkDeletedBuiltins.indexOf(i)===-1; })
+    .concat(milkCustomProds);
+}
+
+function milkResetDefaults(){
+  if(!confirm('Restore all removed built-in products to the batch list?')) return;
+  milkDeletedBuiltins = [];
+  milkDeletedSave();
+  // Rebuild MILK_ESS for restored products
+  var defaultEss = {
+    'Small Cup':         {Vanilla:1.8, Pista:1.5, Strawberry:1.5, Butterscotch:1.5},
+    'Big Cup':           {Vanilla:1.8, Pista:1.5, Strawberry:1.5, Butterscotch:1.5},
+    'Sundae':            {Vanilla:1.5},
+    'Small Cone':        {Vanilla:2.16, Strawberry:1.8, Butterscotch:1.8, Chocolate:2.16},
+    'Big Cone':          {Vanilla:2.04, Pista:1.7, Strawberry:1.7, Butterscotch:1.7, Chocolate:2.04},
+    'Family Pack 400ml': {Vanilla:0.525, Pista:0.4375, Strawberry:0.4375, Butterscotch:0.4375},
+    'Family Pack 700ml': {Vanilla:0.918, Pista:0.765, Strawberry:0.765, Butterscotch:0.765},
+    'Family Pack 1250ml':{Vanilla:1.641, Pista:1.3675, Strawberry:1.3675, Butterscotch:1.3675},
+    'Bulk 5ltr':         {Vanilla:6.0, Pista:5.0, Strawberry:5.0, Butterscotch:5.0},
+  };
+  MILK_PRODS.forEach(function(p){ MILK_ESS[p.name] = defaultEss[p.name] || MILK_ESS[p.name]; });
+  milkBuildRows(); milkUpdateTotals(); milkRenderAllProds();
+}
+
+function milkRenderCustomList(){ milkRenderAllProds(); }
+
+
+function milkAddInit(){
+  var toggle   = document.getElementById('milkAddToggle');
+  var body     = document.getElementById('milkAddBody');
+  var chevron  = document.getElementById('milkAddChevron');
+  var saveBtn  = document.getElementById('milkAddSaveBtn');
+  var cancelBtn= document.getElementById('milkAddClearBtn');
+
+  if(toggle) toggle.addEventListener('click', function(){
+    var open = body.style.display !== 'none';
+    body.style.display = open ? 'none' : 'block';
+    chevron.classList.toggle('open', !open);
+  });
+
+  if(cancelBtn) cancelBtn.addEventListener('click', function(){ milkAddClear(); });
+
+  if(saveBtn) saveBtn.addEventListener('click', function(){
+    var name   = (document.getElementById('milkAddName').value||'').trim();
+    var unit   = document.getElementById('milkAddUnit').value || 'bx';
+    var milkMl = parseFloat(document.getElementById('milkAddMilk').value) || 0;
+
+    if(!name){ alert('Please enter a product name.'); return; }
+    if(milkMl <= 0){ alert('Please enter milk quantity per unit.'); return; }
+    if(milkAllProds().some(function(p){ return p.name.toLowerCase()===name.toLowerCase(); })){
+      alert('A product with this name already exists.'); return;
+    }
+
+    var auto = milkAutoEss(milkMl);
+    var ess = {
+      Vanilla:      parseFloat(document.getElementById('milkAddVanilla').value) || auto.Vanilla,
+      Pista:        parseFloat(document.getElementById('milkAddPista').value)   || auto.Pista,
+      Strawberry:   parseFloat(document.getElementById('milkAddStraw').value)   || auto.Strawberry,
+      Butterscotch: parseFloat(document.getElementById('milkAddButter').value)  || auto.Butterscotch,
+      Chocolate:    parseFloat(document.getElementById('milkAddChoc').value)    || auto.Chocolate,
+    };
+
+    milkCustomProds.push({name:name, unit:unit, milk:milkMl, ess:ess});
+    // Add to MILK_ESS too
+    MILK_ESS[name] = ess;
+    milkCustomSave();
+    milkAddClear();
+    milkMgmtTab('all');
+    milkBuildRows();
+    milkUpdateTotals();
+
+    // Flash success
+    saveBtn.textContent = '✓ Added!';
+    setTimeout(function(){ saveBtn.textContent = '+ Add to Batch List'; }, 1800);
+  });
+
+  milkRenderCustomList();
+}
+
+function milkAddClear(){
+  ['milkAddName','milkAddMilk','milkAddVanilla','milkAddPista','milkAddStraw','milkAddButter','milkAddChoc']
+    .forEach(function(id){ var el2=document.getElementById(id); if(el2) el2.value=''; });
+  document.getElementById('milkAddUnit').value='bx';
+}
+
+
+// ════════════ INVENTORY MANAGE PRODUCTS ════════════
+const INV_CUSTOM_STORE  = 'coolpoint_inv_custom_v1';
+const INV_DELETED_STORE = 'coolpoint_inv_deleted_v1';
+
+var invCustomProds  = JSON.parse(localStorage.getItem(INV_CUSTOM_STORE)  || '[]');
+var invDeletedBuiltins = JSON.parse(localStorage.getItem(INV_DELETED_STORE) || '[]');
+
+// Default PRODUCTS snapshot for reset
+const PRODUCTS_DEFAULT = PRODUCTS.map(function(p){ return {name:p.name,unit:p.unit,rate:p.rate}; });
+
+function invCustomSave(){ localStorage.setItem(INV_CUSTOM_STORE,  JSON.stringify(invCustomProds)); }
+function invDeletedSave(){ localStorage.setItem(INV_DELETED_STORE, JSON.stringify(invDeletedBuiltins)); }
+
+function invAllProds(){
+  return PRODUCTS.filter(function(p,i){ return invDeletedBuiltins.indexOf(i)===-1; })
+    .concat(invCustomProds);
+}
+
+function footerCardToggle(){
+  var body    = document.getElementById('footerCardBody');
+  var chevron = document.getElementById('footerCardChevron');
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  chevron.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+function invMgmtToggle(){
+  var body    = document.getElementById('invMgmtBody');
+  var chevron = document.getElementById('invMgmtChevron');
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  chevron.style.transform = open ? '' : 'rotate(180deg)';
+  if(!open) invMgmtTab('all');
+}
+
+function invMgmtTab(tab){
+  document.getElementById('invPanelAll').style.display = tab==='all' ? 'block' : 'none';
+  document.getElementById('invPanelAdd').style.display = tab==='add' ? 'block' : 'none';
+  document.getElementById('invTabAll').className = 'milk-mgmt-tab'+(tab==='all'?' active':'');
+  document.getElementById('invTabAdd').className = 'milk-mgmt-tab'+(tab==='add'?' active':'');
+  if(tab==='all') invRenderAllProds();
+}
+
+function invRenderAllProds(){
+  var el2 = document.getElementById('invAllProdList');
+  if(!el2) return;
+  var all = invAllProds();
+  var totalBuiltin = PRODUCTS.filter(function(p,i){ return invDeletedBuiltins.indexOf(i)===-1; }).length;
+
+  el2.innerHTML = all.map(function(p, i){
+    var isCustom = i >= totalBuiltin;
+    var badge = isCustom
+      ? '<span class="milk-prod-row-badge custom">Custom</span>'
+      : '<span class="milk-prod-row-badge">Built-in</span>';
+    var pkey = p.name.replace(/\s/g,'_');
+    var delFn = isCustom
+      ? 'invDelCustom('+( i - totalBuiltin )+')'
+      : 'invDelBuiltin('+PRODUCTS.findIndex(function(x){ return x.name===p.name; })+')';
+
+    return '<div class="milk-prod-row-wrap" id="invrow_'+pkey+'">'
+      +'<div class="milk-prod-row">'
+      +'<span class="milk-prod-row-name" title="'+p.name+'">'+p.name+'</span>'
+      +'<span class="milk-prod-row-meta">&#8377;'+p.rate+'/'+p.unit+'</span>'
+      +badge
+      +'<div class="milk-prod-row-actions">'
+      +'<button class="milk-prod-act-btn edit" onclick="invToggleEdit(\''+pkey+'\')">Edit</button>'
+      +'<button class="milk-prod-act-btn del"  onclick="'+delFn+'">Remove</button>'
+      +'</div>'
+      +'</div>'
+      +'<div class="milk-edit-form" id="invedit_'+pkey+'">'
+      +'<div class="milk-edit-row">'
+      +'<div class="milk-edit-field" style="flex:2;min-width:120px"><label class="milk-edit-label">Name</label>'
+      +'<input class="milk-edit-input" id="invename_'+pkey+'" value="'+p.name+'"></div>'
+      +'<div class="milk-edit-field"><label class="milk-edit-label">Unit</label>'
+      +'<select class="milk-edit-input" id="inveunit_'+pkey+'">'
+      +'<option'+(p.unit==='bx'?' selected':'')+'>bx</option>'
+      +'<option'+(p.unit==='unit'?' selected':'')+'>unit</option>'
+      +'<option'+(p.unit==='kg'?' selected':'')+'>kg</option>'
+      +'<option'+(p.unit==='ltr'?' selected':'')+'>ltr</option>'
+      +'</select></div>'
+      +'<div class="milk-edit-field"><label class="milk-edit-label">Rate (&#8377;)</label>'
+      +'<input class="milk-edit-input" id="inverate_'+pkey+'" type="number" value="'+p.rate+'"></div>'
+      +'</div>'
+      +'<div class="milk-edit-actions">'
+      +'<button class="milk-edit-save" onclick="invSaveEdit(\''+p.name+'\')">&#10003; Save</button>'
+      +'<button class="milk-edit-cancel" onclick="invCancelEdit(\''+pkey+'\')">Cancel</button>'
+      +'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function invToggleEdit(pkey){
+  var form = document.getElementById('invedit_'+pkey);
+  if(!form) return;
+  var isOpen = form.classList.contains('open');
+  document.querySelectorAll('#invAllProdList .milk-edit-form.open').forEach(function(f){ f.classList.remove('open'); });
+  if(!isOpen) form.classList.add('open');
+}
+function invCancelEdit(pkey){
+  var form = document.getElementById('invedit_'+pkey);
+  if(form) form.classList.remove('open');
+}
+
+function invSaveEdit(oldName){
+  var pkey    = oldName.replace(/\s/g,'_');
+  var newName = (document.getElementById('invename_'+pkey)||{}).value.trim() || oldName;
+  var newUnit = (document.getElementById('inveunit_'+pkey)||{}).value || 'bx';
+  var newRate = parseFloat((document.getElementById('inverate_'+pkey)||{}).value) || 0;
+  if(!newName || newRate <= 0){ alert('Name and rate are required.'); return; }
+
+  var bi = PRODUCTS.findIndex(function(p){ return p.name===oldName; });
+  if(bi >= 0){
+    PRODUCTS[bi].name = newName;
+    PRODUCTS[bi].unit = newUnit;
+    PRODUCTS[bi].rate = newRate;
+  } else {
+    var ci = invCustomProds.findIndex(function(p){ return p.name===oldName; });
+    if(ci >= 0){ invCustomProds[ci] = {name:newName,unit:newUnit,rate:newRate}; invCustomSave(); }
+  }
+  renderRows(el.date.value); updateSummary(el.date.value);
+  invRenderAllProds();
+}
+
+function invDelBuiltin(bi){
+  var name = PRODUCTS[bi].name;
+  if(!confirm('Remove "'+name+'" from the inventory list?\n\nUse ↺ Reset to defaults to restore it.')) return;
+  invDeletedBuiltins.push(bi);
+  invDeletedSave();
+  renderRows(el.date.value);
+  invRenderAllProds();
+}
+
+function invDelCustom(ci){
+  var name = invCustomProds[ci].name;
+  if(!confirm('Remove "'+name+'" from the inventory list?')) return;
+  invCustomProds.splice(ci,1);
+  invCustomSave();
+  renderRows(el.date.value);
+  invRenderAllProds();
+}
+
+function invResetDefaults(){
+  if(!confirm('Restore all removed built-in products?')) return;
+  invDeletedBuiltins = [];
+  invDeletedSave();
+  // Restore original rates/units for any edited built-ins
+  PRODUCTS_DEFAULT.forEach(function(def,i){ PRODUCTS[i].name=def.name; PRODUCTS[i].unit=def.unit; PRODUCTS[i].rate=def.rate; });
+  renderRows(el.date.value); updateSummary(el.date.value);
+  invRenderAllProds();
+}
+
+function invAddClear(){
+  ['invAddName','invAddRate'].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
+  document.getElementById('invAddUnit').value='bx';
+}
+
+function invAddInit(){
+  // Load custom products into PRODUCTS list
+  invCustomProds.forEach(function(p){
+    if(!PRODUCTS.find(function(x){ return x.name===p.name; })) PRODUCTS.push(p);
+  });
+
+  var saveBtn = document.getElementById('invAddSaveBtn');
+  if(saveBtn) saveBtn.addEventListener('click', function(){
+    var name = (document.getElementById('invAddName').value||'').trim().toUpperCase();
+    var unit = document.getElementById('invAddUnit').value || 'bx';
+    var rate = parseFloat(document.getElementById('invAddRate').value) || 0;
+    if(!name){ alert('Please enter a product name.'); return; }
+    if(rate <= 0){ alert('Please enter a rate.'); return; }
+    if(invAllProds().some(function(p){ return p.name===name; })){ alert('A product with this name already exists.'); return; }
+    invCustomProds.push({name:name, unit:unit, rate:rate});
+    PRODUCTS.push({name:name, unit:unit, rate:rate});
+    invCustomSave();
+    invAddClear();
+    invMgmtTab('all');
+    renderRows(el.date.value); updateSummary(el.date.value);
+    saveBtn.textContent = '✓ Added!';
+    setTimeout(function(){ saveBtn.textContent = '+ Add to Inventory'; }, 1800);
+  });
+}
+
 (function init(){
+  invAddInit();
   loadDay(todayISO());
   renderDays();
   persist();
+  milkInit();
+  document.getElementById('modeBtnInv').addEventListener('click',function(){ switchMode('inv'); });
+  document.getElementById('modeBtnMilk').addEventListener('click',function(){ switchMode('milk'); });
 })();
 </script>
 </body>
